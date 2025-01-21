@@ -9,7 +9,8 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-
+    private ChessGame.TeamColor teamColor;
+    private PieceType pieceType;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
     }
 
@@ -29,14 +30,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return teamColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return pieceType;
     }
 
     /**
@@ -46,7 +47,16 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPieceMoveCalculator moves = switch(getPieceType()) {
+            case QUEEN -> new QueenMoveCalculator();
+            case KNIGHT -> new KnightMoveCalculator();
+            case ROOK -> new RookMoveCalculator();
+            case PAWN -> new PawnMoveCalculator();
+            case KING -> new KingMoveCalculator();
+            case BISHOP -> new BishopMoveCalculator();
+        };
+        return moves.pieceMoves(board, position);
     }
 }

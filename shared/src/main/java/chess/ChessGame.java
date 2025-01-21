@@ -10,6 +10,15 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    /* getTeamTurn() : :TeamColor
+    validMoves(ChessPosition) : :Collection<ChessMove>
+    makeMove(ChessMove)
+    isInCheck(TeamColor) : :Boolean
+    isInCheckmate(TeamColor) : :Boolean
+    isInStalemate(TeamColor) : :Boolean
+    setBoard(ChessBoard)
+    getBoard() : :ChessBoard */
+
     public ChessGame() {
 
     }
