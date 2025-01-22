@@ -11,6 +11,8 @@ import java.util.Collection;
 public class ChessPiece {
     private ChessGame.TeamColor teamColor;
     private PieceType pieceType;
+    private Collection<ChessMove> moves;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
     }
 
@@ -47,9 +49,9 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPieceMoveCalculator moves = switch(getPieceType()) {
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
+        ChessPieceMoveCalculator moves = switch (getPieceType()) {
             case QUEEN -> new QueenMoveCalculator();
             case KNIGHT -> new KnightMoveCalculator();
             case ROOK -> new RookMoveCalculator();
