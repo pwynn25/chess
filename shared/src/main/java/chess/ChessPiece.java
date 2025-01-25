@@ -20,6 +20,7 @@ public class ChessPiece {
         this.pieceType = type;
         this.teamColor = pieceColor;
         // forgot to commit
+        //just so I can commit again
     }
 
     /**
