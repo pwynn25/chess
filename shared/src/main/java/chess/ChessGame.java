@@ -42,7 +42,7 @@ public class ChessGame {
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
-    public enum TeamColor {
+    public static enum TeamColor {
         WHITE,
         BLACK
     }

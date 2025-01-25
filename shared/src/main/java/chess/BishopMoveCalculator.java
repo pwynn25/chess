@@ -3,11 +3,11 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopMoveCalculator implements ChessPieceMoveCalculator{
+public class BishopMoveCalculator extends ChessPieceMoveCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
-
+        Collection<ChessMove> possibleMoves;
+        possibleMoves = calculateDiagonalMoves(chessBoard,position);
 
         return possibleMoves;
     }
-};
+}

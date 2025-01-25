@@ -3,6 +3,8 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.WHITE;
+
 /**
  * Represents a single chess piece
  * <p>
@@ -10,11 +12,13 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor teamColor;
     private PieceType pieceType;
     private Collection<ChessMove> moves;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceType = type;
+        this.teamColor = pieceColor;
     }
 
     /**
@@ -63,6 +67,7 @@ public class ChessPiece {
         return moves.pieceMoves(board, position);
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -75,5 +80,53 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(teamColor, pieceType, moves);
+    }
+
+    @Override
+    public String toString() {
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            if (pieceType == ChessPiece.PieceType.KNIGHT) {
+                return "n";
+            }
+            if (pieceType == ChessPiece.PieceType.ROOK) {
+                return "r";
+            }
+            if (pieceType == ChessPiece.PieceType.PAWN) {
+                return "p";
+            }
+            if (pieceType == ChessPiece.PieceType.KING) {
+                return "k";
+            }
+            if (pieceType == ChessPiece.PieceType.BISHOP) {
+                return "b";
+            }
+            if (pieceType == ChessPiece.PieceType.QUEEN) {
+                return "q";
+            }
+        }
+        else {
+            if (pieceType == ChessPiece.PieceType.KNIGHT) {
+                return "N";
+            }
+            if (pieceType == ChessPiece.PieceType.ROOK) {
+                return "R";
+            }
+            if (pieceType == ChessPiece.PieceType.PAWN) {
+                return "P";
+            }
+            if (pieceType == ChessPiece.PieceType.KING) {
+                return "K";
+            }
+            if (pieceType == ChessPiece.PieceType.BISHOP) {
+                return "B";
+            }
+            if (pieceType == ChessPiece.PieceType.QUEEN) {
+                return "Q";
+            }
+            else {
+                return "null";
+            }
+        }
+        return "";
     }
 }
