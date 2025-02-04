@@ -18,7 +18,8 @@ public class ChessGame {
     isInStalemate(TeamColor) : :Boolean
     setBoard(ChessBoard)
     getBoard() : :ChessBoard */
-
+    private TeamColor teamTurn;
+    private ChessBoard currentBoard;
     public ChessGame() {
 
     }
@@ -27,7 +28,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return teamTurn;
     }
 
     /**
@@ -36,7 +37,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        this.teamTurn = team;
     }
 
     /**
@@ -55,7 +56,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        // this filters moves to see if they put the king in check
+        Collection <ChessMove> validMoves;
+        validMoves = currentBoard.getPiece(startPosition).pieceMoves(currentBoard,startPosition);
+
+        return validMoves;
     }
 
     /**
@@ -65,7 +70,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        throw new InvalidMoveException("Invalid Move");
     }
 
     /**
@@ -75,6 +80,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+//     if any of the opposing teams pieces has the kings piece in it, then the king is in check
         throw new RuntimeException("Not implemented");
     }
 
@@ -105,7 +111,8 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+
+        this.currentBoard = board;
     }
 
     /**
@@ -114,6 +121,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+
+        return currentBoard;
     }
 }

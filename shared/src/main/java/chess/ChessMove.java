@@ -64,7 +64,6 @@ public class ChessMove {
                 " end=" + endPosition + "\n";
 
 
-//                ", promotionPiece=" + promotionPiece +
-//                '}'
     }
+
 }
