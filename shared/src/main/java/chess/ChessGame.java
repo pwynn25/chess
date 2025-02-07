@@ -76,34 +76,38 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        Collection <ChessMove> validMoves = validMoves(move.getStartPosition());
-        // Check the piece type
-        ChessPiece.PieceType movingPieceType = currentBoard.getPiece(move.getStartPosition()).getPieceType();
+        if(currentBoard.getPiece(move.getStartPosition()).getTeamColor() == this.teamTurn) {
+            Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+            // Check the piece type
+            ChessPiece.PieceType movingPieceType = currentBoard.getPiece(move.getStartPosition()).getPieceType();
 
-        ChessPosition startPosition = move.getStartPosition();
-        ChessPosition endPosition = move.getEndPosition();
+            ChessPosition startPosition = move.getStartPosition();
+            ChessPosition endPosition = move.getEndPosition();
 
-        if(validMoves.contains(move)) {
-            currentBoard.addPiece(endPosition,currentBoard.getPiece(startPosition));
-            currentBoard.removePiece(startPosition);
-            if(movingPieceType == KING) {
-                // this sets the king's position
-                currentBoard.setKingPosition(currentBoard.getPiece(endPosition).getTeamColor(),endPosition);
+            if (validMoves.contains(move)) {
+                currentBoard.addPiece(endPosition, currentBoard.getPiece(startPosition));
+                currentBoard.removePiece(startPosition);
+                if (movingPieceType == KING) {
+                    // this sets the king's position
+                    currentBoard.setKingPosition(currentBoard.getPiece(endPosition).getTeamColor(), endPosition);
+                }
+                changeTeamTurn(this.teamTurn);
+            } else {
+                throw new InvalidMoveException("Invalid Move");
+                // do we need to prompt the user again??
             }
-            changeTeamTurn(this.teamTurn);
         }
         else {
-            throw new InvalidMoveException("Invalid Move");
-            // do we need to prompt the user again??
+            throw new InvalidMoveException("Invalid Move: noy your turn");
         }
     }
-    public void changeTeamTurn(TeamColor teamTurn) {
-        if (teamTurn == TeamColor.WHITE) {
-            this.teamTurn = TeamColor.BLACK;
-        }
-        else {
-            this.teamTurn = TeamColor.WHITE;
-        }
+    public void changeTeamTurn(TeamColor teamTurn){
+            if (teamTurn == TeamColor.WHITE) {
+                this.teamTurn = TeamColor.BLACK;
+            } else {
+                this.teamTurn = TeamColor.WHITE;
+            }
+
     }
 
     /**
