@@ -27,6 +27,9 @@ public class ChessBoard {
         for(int i = 0; i < copyBoard.squares.length; i ++) {
             squares[i] = Arrays.copyOf(copyBoard.squares[i], copyBoard.squares[i].length);
         }
+        this.whiteKing = new ChessPosition(copyBoard.whiteKing.getRow(), copyBoard.whiteKing.getColumn());
+        this.blackKing = new ChessPosition(copyBoard.blackKing.getRow(), copyBoard.blackKing.getColumn());
+
     }
 
     /**

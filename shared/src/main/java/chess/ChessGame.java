@@ -73,18 +73,20 @@ public class ChessGame {
                 stillValidMoves.add(move);
             }
         }
-        return validMoves;
+        return stillValidMoves;
     }
     // returns false when the prospective move leaves the King in Check
     public boolean isInCheckFilter(ChessMove move) {
         Boolean stillValid = true;
         ChessBoard copyBoard = new ChessBoard(currentBoard);
 
-        copyBoard.addPiece(move.getEndPosition(),currentBoard.getPiece(move.getStartPosition()));
+        copyBoard.addPiece(move.getEndPosition(),copyBoard.getPiece(move.getStartPosition()));
         copyBoard.removePiece(move.getStartPosition());
 
-        if(isInCheck(copyBoard.getPiece(move.getEndPosition()).getTeamColor())) {
-            stillValid = false;
+        if(copyBoard.getPiece(move.getEndPosition()) != null) {
+            if(isInCheckHelper(copyBoard,copyBoard.getPiece(move.getEndPosition()).getTeamColor())) {
+                stillValid = false;
+            }
         }
 
         return stillValid;
@@ -100,10 +102,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-        // Check if the Starting Position is empty
+        // Check if the correct team is playing
         if(currentBoard.getPiece(move.getStartPosition()).getTeamColor() == this.teamTurn) {
 
-            //  Check if is the teams turn
+            //  Check if starting position contains a piece
             if (currentBoard.getPiece(move.getStartPosition()) != null) {
                 Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
 
@@ -151,30 +153,9 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
+    // this function checks the current board to see if its in check
     public boolean isInCheck(TeamColor teamColor) {
-        Collection <ChessPosition> endPositions = new ArrayList<>();
-        ChessPosition kingPosition = currentBoard.getKingPosition(teamColor);
-        ChessBoard copyBoard = new ChessBoard(currentBoard);
-
-        // try all the pieceMoves
-        ChessPiece.PieceType[] pieceTypes = {KING, QUEEN, ROOK, BISHOP, PAWN, KNIGHT};
-
-        for(ChessPiece.PieceType pieceType: pieceTypes) {
-            copyBoard.addPiece(kingPosition,new ChessPiece(teamColor,pieceType));
-            Collection <ChessMove> moves = copyBoard.getPiece(kingPosition).pieceMoves(copyBoard,kingPosition);
-            endPositions.addAll(extractEndPositions(moves));
-            ChessPiece.PieceType pieceInCheck = copyBoard.getPiece(kingPosition).getPieceType();
-            for(ChessPosition endPosition: endPositions) {
-
-                ChessPiece pieceCausingCheck = copyBoard.getPiece(endPosition);
-                if(pieceCausingCheck != null) {
-                    if (pieceInCheck == pieceCausingCheck.getPieceType()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return isInCheckHelper(currentBoard,teamColor);
     }
 
     public Collection<ChessPosition> extractEndPositions(Collection<ChessMove> moves) {
@@ -184,6 +165,34 @@ public class ChessGame {
             endPositions.add(move.getEndPosition());
         }
         return endPositions;
+    }
+
+
+    public boolean isInCheckHelper(ChessBoard board, TeamColor teamColor) {
+        Collection <ChessPosition> endPositions = new ArrayList<>();
+        ChessPosition kingPosition = board.getKingPosition(teamColor);
+
+        // try all the pieceMoves
+        ChessPiece.PieceType[] pieceTypes = {KING, QUEEN, ROOK, BISHOP, PAWN, KNIGHT};
+
+        for(ChessPiece.PieceType pieceType: pieceTypes) {
+            board.addPiece(kingPosition,new ChessPiece(teamColor,pieceType));
+            Collection <ChessMove> moves = board.getPiece(kingPosition).pieceMoves(board,kingPosition);
+            endPositions.addAll(extractEndPositions(moves));
+            ChessPiece.PieceType pieceInCheck = board.getPiece(kingPosition).getPieceType();
+            // check which moves involve a piece of the same type
+            // the king is in check if the pieces are of the same type
+            for(ChessPosition endPosition: endPositions) {
+
+                ChessPiece pieceCausingCheck = board.getPiece(endPosition);
+                if(pieceCausingCheck != null) {
+                    if (pieceInCheck == pieceCausingCheck.getPieceType()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
