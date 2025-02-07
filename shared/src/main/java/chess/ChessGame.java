@@ -90,10 +90,19 @@ public class ChessGame {
                 // this sets the king's position
                 currentBoard.setKingPosition(currentBoard.getPiece(endPosition).getTeamColor(),endPosition);
             }
+            changeTeamTurn(this.teamTurn);
         }
         else {
             throw new InvalidMoveException("Invalid Move");
             // do we need to prompt the user again??
+        }
+    }
+    public void changeTeamTurn(TeamColor teamTurn) {
+        if (teamTurn == TeamColor.WHITE) {
+            this.teamTurn = TeamColor.BLACK;
+        }
+        else {
+            this.teamTurn = TeamColor.WHITE;
         }
     }
 
@@ -123,6 +132,7 @@ public class ChessGame {
         }
         return false;
     }
+
     public Collection<ChessPosition> extractEndPositions(Collection<ChessMove> moves) {
         Collection<ChessPosition> endPositions = new ArrayList<>();
 
@@ -175,10 +185,6 @@ public class ChessGame {
     public ChessBoard getBoard() {
 
         return currentBoard;
-    }
-    public boolean isValidMove(ChessBoard currentBoard, ChessMove move) {
-        // is this where I want to copy the board??
-            return true;
     }
 
 
