@@ -22,14 +22,13 @@ public class ChessBoard {
         this.whiteKing = new ChessPosition(1,5);
         this.blackKing = new ChessPosition(8,5);
     }
-    public ChessBoard(ChessBoard copyBoard) {
+    public ChessBoard(ChessBoard copyBoard, ChessPosition whiteKingPosition, ChessPosition blackKingPosition) {
 
         for(int i = 0; i < copyBoard.squares.length; i ++) {
             squares[i] = Arrays.copyOf(copyBoard.squares[i], copyBoard.squares[i].length);
         }
-        this.whiteKing = new ChessPosition(copyBoard.whiteKing.getRow(), copyBoard.whiteKing.getColumn());
-        this.blackKing = new ChessPosition(copyBoard.blackKing.getRow(), copyBoard.blackKing.getColumn());
-
+        this.whiteKing = whiteKingPosition;
+        this.blackKing = blackKingPosition;
     }
 
     /**
@@ -90,7 +89,10 @@ public class ChessBoard {
         for(int i = 1; i < 9; i++) {
             addPiece(new ChessPosition(7, i), new ChessPiece(BLACK, PAWN));
         }
+        this.whiteKing = new ChessPosition(1,5);
+        this.blackKing = new ChessPosition(8,5);
     }
+
     /*This clears the board*/
 
     public void clearBoard() {
