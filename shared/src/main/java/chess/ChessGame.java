@@ -60,14 +60,37 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        // this filters moves to see if they put the king in check, does this move put the king in check
+
         Collection <ChessMove> validMoves;
+        Collection<ChessMove> stillValidMoves = new ArrayList<>();
 
         validMoves = currentBoard.getPiece(startPosition).pieceMoves(currentBoard,startPosition);
 
-
+        Boolean isValid;
+        for(ChessMove move: validMoves) {
+            isValid = isInCheckFilter(move);
+            if(isValid) {
+                stillValidMoves.add(move);
+            }
+        }
         return validMoves;
     }
+    // returns false when the prospective move leaves the King in Check
+    public boolean isInCheckFilter(ChessMove move) {
+        Boolean stillValid = true;
+        ChessBoard copyBoard = new ChessBoard(currentBoard);
+
+        copyBoard.addPiece(move.getEndPosition(),currentBoard.getPiece(move.getStartPosition()));
+        copyBoard.removePiece(move.getStartPosition());
+
+        if(isInCheck(copyBoard.getPiece(move.getEndPosition()).getTeamColor())) {
+            stillValid = false;
+        }
+
+        return stillValid;
+    }
+
+
 
     /**
      * Makes a move in a chess game
@@ -76,31 +99,43 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
+        // Check if the Starting Position is empty
         if(currentBoard.getPiece(move.getStartPosition()).getTeamColor() == this.teamTurn) {
-            Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
-            // Check the piece type
-            ChessPiece.PieceType movingPieceType = currentBoard.getPiece(move.getStartPosition()).getPieceType();
 
-            ChessPosition startPosition = move.getStartPosition();
-            ChessPosition endPosition = move.getEndPosition();
+            //  Check if is the teams turn
+            if (currentBoard.getPiece(move.getStartPosition()) != null) {
+                Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
 
-            if (validMoves.contains(move)) {
-                currentBoard.addPiece(endPosition, currentBoard.getPiece(startPosition));
-                currentBoard.removePiece(startPosition);
-                if (movingPieceType == KING) {
-                    // this sets the king's position
-                    currentBoard.setKingPosition(currentBoard.getPiece(endPosition).getTeamColor(), endPosition);
+                // Check the piece type to determine if it is the King
+                ChessPiece.PieceType movingPieceType = currentBoard.getPiece(move.getStartPosition()).getPieceType();
+
+                ChessPosition startPosition = move.getStartPosition();
+                ChessPosition endPosition = move.getEndPosition();
+
+                if (validMoves.contains(move)) {
+                    currentBoard.addPiece(endPosition, currentBoard.getPiece(startPosition));
+                    currentBoard.removePiece(startPosition);
+                    if (movingPieceType == KING) {
+                        // this sets the king's position
+                        currentBoard.setKingPosition(currentBoard.getPiece(endPosition).getTeamColor(), endPosition);
+                    }
+                    changeTeamTurn(this.teamTurn);
+                } else {
+                    throw new InvalidMoveException("Invalid Move");
+                    // do we need to prompt the user again??
                 }
-                changeTeamTurn(this.teamTurn);
             } else {
-                throw new InvalidMoveException("Invalid Move");
-                // do we need to prompt the user again??
+                throw new InvalidMoveException("Invalid Move: no piece there");
             }
         }
         else {
-            throw new InvalidMoveException("Invalid Move: noy your turn");
+            throw new InvalidMoveException("Invalid Move: not your turn");
         }
     }
+
+
+    // helper function
     public void changeTeamTurn(TeamColor teamTurn){
             if (teamTurn == TeamColor.WHITE) {
                 this.teamTurn = TeamColor.BLACK;
@@ -128,9 +163,14 @@ public class ChessGame {
             copyBoard.addPiece(kingPosition,new ChessPiece(teamColor,pieceType));
             Collection <ChessMove> moves = copyBoard.getPiece(kingPosition).pieceMoves(copyBoard,kingPosition);
             endPositions.addAll(extractEndPositions(moves));
+            ChessPiece.PieceType pieceInCheck = copyBoard.getPiece(kingPosition).getPieceType();
             for(ChessPosition endPosition: endPositions) {
-                if(copyBoard.getPiece(kingPosition).getPieceType()==copyBoard.getPiece(endPosition).getPieceType()) {
-                    return true;
+
+                ChessPiece pieceCausingCheck = copyBoard.getPiece(endPosition);
+                if(pieceCausingCheck != null) {
+                    if (pieceInCheck == pieceCausingCheck.getPieceType()) {
+                        return true;
+                    }
                 }
             }
         }
