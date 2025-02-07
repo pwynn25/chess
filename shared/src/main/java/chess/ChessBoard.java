@@ -15,10 +15,18 @@ import static chess.ChessPiece.PieceType.*;
  */
 public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
-
+    private ChessPosition whiteKing;
+    private ChessPosition blackKing;
 
     public ChessBoard() {
-        
+        this.whiteKing = new ChessPosition(1,5);
+        this.blackKing = new ChessPosition(8,5);
+    }
+    public ChessBoard(ChessBoard copyBoard) {
+
+        for(int i = 0; i < copyBoard.squares.length; i ++) {
+            squares[i] = Arrays.copyOf(copyBoard.squares[i], copyBoard.squares[i].length);
+        }
     }
 
     /**
@@ -29,6 +37,9 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         squares[position.getRow()-1][position.getColumn()-1] = piece;
+    }
+    public void removePiece(ChessPosition position) {
+        squares[position.getRow()-1][position.getColumn()-1] = null;
     }
 
     /**
@@ -54,7 +65,7 @@ public class ChessBoard {
         addPiece(new ChessPosition(1, 2), new ChessPiece(WHITE, KNIGHT)); // b1
         addPiece(new ChessPosition(1, 3), new ChessPiece(WHITE, BISHOP)); // c1
         addPiece(new ChessPosition(1, 4), new ChessPiece(WHITE, QUEEN));  // d1
-        addPiece(new ChessPosition(1, 5), new ChessPiece(WHITE, KING));   // e1
+        addPiece(new ChessPosition(1, 5), new ChessPiece(WHITE, KING));// e1
         addPiece(new ChessPosition(1, 6), new ChessPiece(WHITE, BISHOP)); // f1
         addPiece(new ChessPosition(1, 7), new ChessPiece(WHITE, KNIGHT)); // g1
         addPiece(new ChessPosition(1, 8), new ChessPiece(WHITE, ROOK));   // h1
@@ -84,6 +95,22 @@ public class ChessBoard {
             for (int column = 1; column < 9; column++) {
                 squares[row-1][column-1] = null;
             }
+        }
+    }
+    public ChessPosition getKingPosition(ChessGame.TeamColor team) {
+        if(team == WHITE) {
+            return whiteKing;
+        }
+        else{
+            return blackKing;
+        }
+    }
+    public void setKingPosition(ChessGame.TeamColor team,ChessPosition newPosition) {
+        if(team == WHITE) {
+            whiteKing = newPosition;
+        }
+        else{
+            blackKing = newPosition;
         }
     }
 
