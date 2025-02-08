@@ -118,16 +118,24 @@ public class ChessGame {
 
                 // is the move valid??
                 if (validMoves.contains(move)) {
+
+                    // check to see if the move is promotion move
                     if(move.getPromotionPiece() != null) {
                         currentBoard.addPiece(endPosition,new ChessPiece(teamTurn,move.getPromotionPiece()));
                     }
                     else {
                         currentBoard.addPiece(endPosition, currentBoard.getPiece(startPosition));
                     }
+                    // remove the piece that was there
                     currentBoard.removePiece(startPosition);
+
+                    // update king position if piece moved was a King
                     if (movingPieceType == KING) {
                         // this sets the king's position
                         currentBoard.setKingPosition(currentBoard.getPiece(endPosition).getTeamColor(), endPosition);
+                    }
+                    if(isInStalemate(this.teamTurn)) {
+                        throw new InvalidMoveException("Your methods worked!!!");
                     }
                     changeTeamTurn(this.teamTurn);
                 } else {
@@ -162,7 +170,8 @@ public class ChessGame {
      */
     // this function checks the current board to see if its in check
     public boolean isInCheck(TeamColor teamColor) {
-        return isInCheckHelper(currentBoard,teamColor);
+        ChessBoard copyBoard = new ChessBoard(currentBoard,currentBoard.getKingPosition(TeamColor.WHITE),currentBoard.getKingPosition(TeamColor.BLACK));
+        return isInCheckHelper(copyBoard,teamColor);
     }
 
     public Collection<ChessPosition> extractEndPositions(Collection<ChessMove> moves) {
@@ -211,7 +220,7 @@ public class ChessGame {
 //   only check if checkmate is the king is already in check
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)) {
-            return isInStalemate(teamColor);
+            return isInStalemateHelper(teamColor);
         }
         else {
             return false;
@@ -226,9 +235,13 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return isInStalemateHelper(teamColor);
+        if (isInCheck(teamColor)) {
+            return false;
+        } else {
+            return isInStalemateHelper(teamColor);
+        }
     }
-
+   //  returns true if there are no valid moves that take the king out of check
     public boolean isInStalemateHelper(TeamColor teamColor) {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
