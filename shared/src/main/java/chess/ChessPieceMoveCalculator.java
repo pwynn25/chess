@@ -84,6 +84,44 @@ public abstract class ChessPieceMoveCalculator {
         }
         return possibleDiagonalMoves;
     }
+
+    public Collection<ChessMove> calcKingAndKnightMoves(ChessBoard chessBoard, ChessPosition position, ChessPiece.PieceType type ) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        ChessGame.TeamColor teamColor = chessBoard.getPiece(position).getTeamColor();
+        int[] directionsColumn;
+        int[] directionsRow;
+
+        if (type == ChessPiece.PieceType.KNIGHT) {
+            directionsColumn = new int []{-1, 1, 2, 2, -2, -2, -1, 1};;
+            directionsRow = new int []{2, 2, -1, 1, -1, 1, -2, -2};
+        }
+        else {
+            directionsColumn = new int []{0, 1, 1, 1, 0, -1, -1, -1};
+            directionsRow = new int[]{1, 1, 0, -1, -1, -1, 0, 1};
+        }
+
+
+        int positionRow = position.getRow();
+        int positionColumn = position.getColumn();
+
+
+        for (int i = 0; i < directionsColumn.length; i++) {
+            int potMoveColumn = positionColumn + directionsColumn[i];
+            int potMoveRow = positionRow + directionsRow[i];
+            if (isInRange(potMoveColumn) && isInRange(potMoveRow)) {
+
+                ChessPosition potPosition = new ChessPosition(potMoveRow, potMoveColumn);
+                if (isEmpty(chessBoard, potPosition)) {
+                    ChessMove move = new ChessMove(position, potPosition, null);
+                    possibleMoves.add(move);
+                } else if (isEnemyOccupied(chessBoard, potPosition, teamColor)) {
+                    ChessMove move = new ChessMove(position, potPosition, null);
+                    possibleMoves.add(move);
+                }
+            }
+        }
+        return possibleMoves;
+    }
 }
 
 

@@ -121,11 +121,6 @@ public class ChessBoard {
         }
     }
 
-    // check if the position is on the board
-    public boolean isValidPosition(ChessPosition position) {
-        return squares[position.getRow() - 1][position.getColumn() - 1] == null;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
