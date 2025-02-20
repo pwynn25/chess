@@ -88,10 +88,12 @@ public class PawnMoveCalculator extends ChessPieceMoveCalculator {
         if (potMoveColumn != 0) {
             if (isEmpty(chessBoard, potPosition)) {
                 return false;
-            } else {
+            }
+            else {
                 return isEnemyOccupied(chessBoard, potPosition, teamColor);
             }
-        } else {
+        }
+        else {
             return isEmpty(chessBoard, potPosition);
         }
     }
