@@ -47,13 +47,7 @@ public class ChessGame {
         BLACK
     }
 
-    /**
-     * Gets a valid moves for a piece at the given location
-     *
-     * @param startPosition the piece to get valid moves for
-     * @return Set of valid moves for requested piece, or null if no piece at
-     * startPosition
-     */
+
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
         Collection<ChessMove> validMoves;
@@ -76,7 +70,8 @@ public class ChessGame {
     // returns false when the prospective move leaves the King in Check
     public boolean isInCheckFilter(ChessMove move) {
         Boolean stillValid = true;
-        ChessBoard copyBoard = new ChessBoard(currentBoard, currentBoard.getKingPosition(TeamColor.WHITE), currentBoard.getKingPosition(TeamColor.BLACK));
+        ChessBoard copyBoard = new ChessBoard(currentBoard, currentBoard.getKingPosition(TeamColor.WHITE),
+                currentBoard.getKingPosition(TeamColor.BLACK));
 
 
         copyBoard.addPiece(move.getEndPosition(), copyBoard.getPiece(move.getStartPosition()));
@@ -168,7 +163,8 @@ public class ChessGame {
      */
     // this function checks the current board to see if its in check
     public boolean isInCheck(TeamColor teamColor) {
-        ChessBoard copyBoard = new ChessBoard(currentBoard, currentBoard.getKingPosition(TeamColor.WHITE), currentBoard.getKingPosition(TeamColor.BLACK));
+        ChessBoard copyBoard = new ChessBoard(currentBoard, currentBoard.getKingPosition(TeamColor.WHITE),
+                currentBoard.getKingPosition(TeamColor.BLACK));
         return isInCheckHelper(copyBoard, teamColor);
     }
 
