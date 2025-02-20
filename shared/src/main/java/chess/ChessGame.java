@@ -240,17 +240,29 @@ public class ChessGame {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition pos = new ChessPosition(i, j);
-                if (currentBoard.getPiece(pos) != null) {
-                    if (currentBoard.getPiece(pos).getTeamColor() == teamColor) {
+                if (isSameColor(pos,teamColor)) {
                         Collection<ChessMove> validMoves = validMoves(pos);
                         if (!validMoves.isEmpty()) {
                             return false;
                         }
-                    }
                 }
             }
         }
         return true;
+    }
+    public boolean isSameColor(ChessPosition pos, TeamColor teamColor) {
+        if (currentBoard.getPiece(pos) != null) {
+            if (currentBoard.getPiece(pos).getTeamColor() == teamColor) {
+                return true;
+
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -265,14 +277,18 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(i, j);
                 if (currentBoard.getPiece(pos) != null) {
                     if (currentBoard.getPiece(pos).getPieceType() == ChessPiece.PieceType.KING) {
-                        if (currentBoard.getPiece(pos).getTeamColor() == TeamColor.WHITE) {
-                            currentBoard.setKingPosition(TeamColor.WHITE, pos);
-                        } else {
-                            currentBoard.setKingPosition(TeamColor.BLACK, pos);
-                        }
+                        setKing(pos);
                     }
                 }
             }
+        }
+    }
+
+    public void setKing (ChessPosition pos){
+        if (currentBoard.getPiece(pos).getTeamColor() == TeamColor.WHITE) {
+            currentBoard.setKingPosition(TeamColor.WHITE, pos);
+        } else {
+            currentBoard.setKingPosition(TeamColor.BLACK, pos);
         }
     }
 

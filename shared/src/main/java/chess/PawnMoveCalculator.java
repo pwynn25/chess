@@ -3,113 +3,131 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static chess.ChessGame.TeamColor.WHITE;
-
-public class PawnMoveCalculator extends ChessPieceMoveCalculator {
+public class PawnMoveCalculator extends ChessPieceMoveCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position) {
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
-        ChessGame.TeamColor teamColor = chessBoard.getPiece(position).getTeamColor();
-        int positionRow = position.getRow();
-        int positionColumn = position.getColumn();
-
-        if (isWhite(chessBoard, position)) {
-            int[] directionsColumnWhite = {0, 0, 1, -1};
-            int[] directionsRowWhite = {2, 1, 1, 1};
-
-            // if first move
-            int firstMove = 1; // 1 is false
-            if (positionRow == 2) {
-                int columnToCheck = positionColumn + directionsColumnWhite[1];
-                int rowToCheck = positionRow + directionsRowWhite[1];
-                ChessPosition positionToCheck = new ChessPosition(rowToCheck, columnToCheck);
-                if (isEmpty(chessBoard, positionToCheck)) {
-                    firstMove = 0;// 0 is true
+        Collection<ChessMove> possiblePawnMoves = new ArrayList<>();
+        if(chessBoard.getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            if(position.getRow() == 2) {
+                if(calculateDoubleMove(chessBoard,position) != null) {
+                    possiblePawnMoves.add(calculateDoubleMove(chessBoard, position));
                 }
+                possiblePawnMoves.addAll(calculateNormalMoves(chessBoard,position));
             }
-            for (int i = firstMove; i < directionsColumnWhite.length; i++) {
-                int potMoveColumnWhite = positionColumn + directionsColumnWhite[i];
-                int potMoveRowWhite = positionRow + directionsRowWhite[i];
-                if (isInRange(potMoveColumnWhite) && isInRange(potMoveRowWhite)) {
-                    ChessPosition potPosition = new ChessPosition(potMoveRowWhite, potMoveColumnWhite);
-
-                    if (moveAllowed(chessBoard, potPosition, teamColor, directionsColumnWhite[i])) {
-                        if (potPosition.getRow() == 8) {
-                            Collection<ChessMove> promotionMoves = getPromotionMoves(position, potPosition);
-                            possibleMoves.addAll(promotionMoves);
-                        } else {
-                            ChessMove move = new ChessMove(position, potPosition, null);
-                            possibleMoves.add(move);
-                        }
-                    }
-                }
-            }
-        } else {
-            int[] directionsColumnBlack = {0, 0, 1, -1};
-            int[] directionsRowBlack = {-2, -1, -1, -1};
-
-            // if first move
-            int firstMove = 1; // 1 is false
-            if (positionRow == 7) {
-                int columnToCheck = positionColumn + directionsColumnBlack[1];
-                int rowToCheck = positionRow + directionsRowBlack[1];
-                ChessPosition positionToCheck = new ChessPosition(rowToCheck, columnToCheck);
-                if (isEmpty(chessBoard, positionToCheck)) {
-                    firstMove = 0;// 0 is true
-                }
-            }
-            for (int i = firstMove; i < directionsColumnBlack.length; i++) {
-                int potMoveColumnWhite = positionColumn + directionsColumnBlack[i];
-                int potMoveRowWhite = positionRow + directionsRowBlack[i];
-                if (isInRange(potMoveColumnWhite) && isInRange(potMoveRowWhite)) {
-                    ChessPosition potPosition = new ChessPosition(potMoveRowWhite, potMoveColumnWhite);
-
-                    if (moveAllowed(chessBoard, potPosition, teamColor, directionsColumnBlack[i])) {
-                        if (potPosition.getRow() == 1) {
-                            Collection<ChessMove> promotionMoves = getPromotionMoves(position, potPosition);
-                            possibleMoves.addAll(promotionMoves);
-                        } else {
-                            ChessMove move = new ChessMove(position, potPosition, null);
-                            possibleMoves.add(move);
-                        }
-                    }
-                }
-            }
-
-        }
-
-        return possibleMoves;
-    }
-
-    public boolean isWhite(ChessBoard chessBoard, ChessPosition position) {
-        return chessBoard.getPiece(position).getTeamColor() == WHITE;
-    }
-
-    public boolean moveAllowed(ChessBoard chessBoard, ChessPosition potPosition, ChessGame.TeamColor teamColor, int potMoveColumn) {
-        if (potMoveColumn != 0) {
-            if (isEmpty(chessBoard, potPosition)) {
-                return false;
+            else if (position.getRow() < 7) {
+                possiblePawnMoves.addAll(calculateNormalMoves(chessBoard,position));
             }
             else {
-                return isEnemyOccupied(chessBoard, potPosition, teamColor);
+                possiblePawnMoves.addAll(calculatePromotionMoves(chessBoard,position));
             }
         }
         else {
-            return isEmpty(chessBoard, potPosition);
+            if(position.getRow() == 7) {
+                if(calculateDoubleMove(chessBoard,position) != null) {
+                    possiblePawnMoves.add(calculateDoubleMove(chessBoard, position));
+                }
+                possiblePawnMoves.addAll(calculateNormalMoves(chessBoard,position));
+            }
+            else if (position.getRow() > 2) {
+                possiblePawnMoves.addAll(calculateNormalMoves(chessBoard,position));
+            }
+            else {
+                possiblePawnMoves.addAll(calculatePromotionMoves(chessBoard,position));
+            }
+
         }
+
+
+        return possiblePawnMoves;
     }
 
-    public Collection<ChessMove> getPromotionMoves(ChessPosition position, ChessPosition potPosition) {
-        Collection<ChessMove> promotionMoves = new ArrayList<>();
-        ChessMove promoteQueen = new ChessMove(position, potPosition, ChessPiece.PieceType.QUEEN);
-        ChessMove promoteRook = new ChessMove(position, potPosition, ChessPiece.PieceType.ROOK);
-        ChessMove promoteBishop = new ChessMove(position, potPosition, ChessPiece.PieceType.BISHOP);
-        ChessMove promoteKnight = new ChessMove(position, potPosition, ChessPiece.PieceType.KNIGHT);
 
-        promotionMoves.add(promoteQueen);
-        promotionMoves.add(promoteRook);
-        promotionMoves.add(promoteBishop);
-        promotionMoves.add(promoteKnight);
 
-        return promotionMoves;
+    public Collection<ChessMove> calculateNormalMoves(ChessBoard board ,ChessPosition position) {
+        Collection<ChessMove> normalMoves = calculateCaptureMoves(board,position);
+        int directionColumn;
+        int directionRow;
+        ChessPosition posToCheck;
+        if(board.getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            directionColumn = 0;
+            directionRow = 1;
+        }
+        else {
+            directionColumn = 0;
+            directionRow = -1;
+        }
+        ChessPosition potPosition = new ChessPosition(position.getRow() + directionRow, position.getColumn() + directionColumn);
+        if(isInRange(potPosition.getRow()) && isEmpty(board, potPosition)) {
+            ChessMove normalMove = new ChessMove(position,potPosition,null);
+            normalMoves.add(normalMove);
+        }
+        return normalMoves;
+
+    }
+    public Collection<ChessMove> calculateCaptureMoves(ChessBoard chessBoard,ChessPosition position) {
+        Collection<ChessMove> captureMoves = new ArrayList<>();
+        int [] directionsColumn;
+        int [] directionsRow;
+        if(chessBoard.getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            directionsColumn = new int[]{1,-1};
+            directionsRow = new int[]{1,1};
+        }
+        else {
+            directionsColumn = new int[]{1,-1};
+            directionsRow = new int[]{-1,-1};
+        }
+        int potMoveColumn;
+        int potMoveRow;
+        for(int i = 0; i < directionsColumn.length; i ++) {
+            potMoveColumn = position.getColumn() + directionsColumn[i];
+            potMoveRow = position.getRow() + directionsRow[i];
+            if(isInRange(potMoveColumn) && isInRange(potMoveRow)) {
+                ChessPosition potPosition = new ChessPosition(potMoveRow,potMoveColumn);
+                if(!isEmpty(chessBoard,potPosition)) {
+                    if(isEnemyOccupied(chessBoard,position,chessBoard.getPiece(potPosition).getTeamColor())) {
+                        ChessMove move = new ChessMove(position, potPosition, null);
+                        captureMoves.add(move);
+                    }
+                }
+            }
+        }
+        return captureMoves;
+    }
+    public ChessMove calculateDoubleMove(ChessBoard board,ChessPosition position) {
+        ChessMove doubleMove = null;
+        int directionColumn;
+        int directionRow;
+        ChessPosition posToCheck;
+        if(board.getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            directionColumn = 0;
+            directionRow = 2;
+            posToCheck = new ChessPosition(position.getRow() + 1, position.getColumn());
+        }
+        else {
+            directionColumn = 0;
+            directionRow = -2;
+            posToCheck = new ChessPosition(position.getRow() - 1, position.getColumn());
+        }
+        ChessPosition potPosition = new ChessPosition(position.getRow() + directionRow, position.getColumn() + directionColumn);
+        if(isEmpty(board, posToCheck)) {
+            if(isEmpty(board, potPosition)) {
+                doubleMove = new ChessMove(position,potPosition,null);
+            }
+        }
+        return doubleMove;
+    }
+    public Collection <ChessMove> calculatePromotionMoves(ChessBoard chessBoard, ChessPosition position) {
+        Collection <ChessMove> nonPromotedMoves = calculateNormalMoves(chessBoard,position);
+        Collection <ChessMove> promotedMoves = new ArrayList<>();
+        ChessPosition startPosition;
+        ChessPosition endPosition;
+        for (ChessMove nonPromotedMove: nonPromotedMoves) {
+            startPosition = nonPromotedMove.getStartPosition();
+            endPosition = nonPromotedMove.getEndPosition();
+            promotedMoves.add(new ChessMove(startPosition,endPosition, ChessPiece.PieceType.QUEEN));
+            promotedMoves.add(new ChessMove(startPosition,endPosition, ChessPiece.PieceType.ROOK));
+            promotedMoves.add(new ChessMove(startPosition,endPosition, ChessPiece.PieceType.KNIGHT));
+            promotedMoves.add(new ChessMove(startPosition,endPosition, ChessPiece.PieceType.BISHOP));
+        }
+        return promotedMoves;
     }
 }
