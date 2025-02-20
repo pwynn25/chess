@@ -33,6 +33,7 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

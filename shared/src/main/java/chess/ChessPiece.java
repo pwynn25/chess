@@ -3,8 +3,6 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 
-import static chess.ChessGame.TeamColor.WHITE;
-
 /**
  * Represents a single chess piece
  * <p>
@@ -13,7 +11,7 @@ import static chess.ChessGame.TeamColor.WHITE;
  */
 public class ChessPiece {
     private final ChessGame.TeamColor teamColor;
-    private PieceType pieceType;
+    private final PieceType pieceType;
     private Collection<ChessMove> moves;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -105,8 +103,7 @@ public class ChessPiece {
             if (pieceType == ChessPiece.PieceType.QUEEN) {
                 return "q";
             }
-        }
-        else {
+        } else {
             if (pieceType == ChessPiece.PieceType.KNIGHT) {
                 return "N";
             }
@@ -124,8 +121,7 @@ public class ChessPiece {
             }
             if (pieceType == ChessPiece.PieceType.QUEEN) {
                 return "Q";
-            }
-            else {
+            } else {
                 return "null";
             }
         }

@@ -5,14 +5,14 @@ import java.util.Collection;
 
 import static chess.ChessGame.TeamColor.WHITE;
 
-public class PawnMoveCalculator extends ChessPieceMoveCalculator{
-    public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
+public class PawnMoveCalculator extends ChessPieceMoveCalculator {
+    public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         ChessGame.TeamColor teamColor = chessBoard.getPiece(position).getTeamColor();
         int positionRow = position.getRow();
         int positionColumn = position.getColumn();
 
-        if(IsWhite(chessBoard, position)){
+        if (IsWhite(chessBoard, position)) {
             int[] directionsColumnWhite = {0, 0, 1, -1};
             int[] directionsRowWhite = {2, 1, 1, 1};
 
@@ -26,26 +26,24 @@ public class PawnMoveCalculator extends ChessPieceMoveCalculator{
                     firstMove = 0;// 0 is true
                 }
             }
-            for(int i = firstMove ; i < directionsColumnWhite.length ; i++) {
+            for (int i = firstMove; i < directionsColumnWhite.length; i++) {
                 int potMoveColumnWhite = positionColumn + directionsColumnWhite[i];
                 int potMoveRowWhite = positionRow + directionsRowWhite[i];
                 if (isInRange(potMoveColumnWhite) && isInRange(potMoveRowWhite)) {
                     ChessPosition potPosition = new ChessPosition(potMoveRowWhite, potMoveColumnWhite);
 
-                    if (moveAllowed(chessBoard,potPosition,teamColor,directionsColumnWhite[i])) {
+                    if (moveAllowed(chessBoard, potPosition, teamColor, directionsColumnWhite[i])) {
                         if (potPosition.getRow() == 8) {
-                            Collection <ChessMove> promotionMoves = getPromotionMoves(position,potPosition);
+                            Collection<ChessMove> promotionMoves = getPromotionMoves(position, potPosition);
                             possibleMoves.addAll(promotionMoves);
-                        }
-                        else {
+                        } else {
                             ChessMove move = new ChessMove(position, potPosition, null);
                             possibleMoves.add(move);
                         }
                     }
                 }
             }
-        }
-        else {
+        } else {
             int[] directionsColumnBlack = {0, 0, 1, -1};
             int[] directionsRowBlack = {-2, -1, -1, -1};
 
@@ -59,18 +57,17 @@ public class PawnMoveCalculator extends ChessPieceMoveCalculator{
                     firstMove = 0;// 0 is true
                 }
             }
-            for(int i = firstMove ; i < directionsColumnBlack.length ; i++) {
+            for (int i = firstMove; i < directionsColumnBlack.length; i++) {
                 int potMoveColumnWhite = positionColumn + directionsColumnBlack[i];
                 int potMoveRowWhite = positionRow + directionsRowBlack[i];
                 if (isInRange(potMoveColumnWhite) && isInRange(potMoveRowWhite)) {
                     ChessPosition potPosition = new ChessPosition(potMoveRowWhite, potMoveColumnWhite);
 
-                    if (moveAllowed(chessBoard,potPosition,teamColor,directionsColumnBlack[i])) {
+                    if (moveAllowed(chessBoard, potPosition, teamColor, directionsColumnBlack[i])) {
                         if (potPosition.getRow() == 1) {
-                            Collection <ChessMove> promotionMoves = getPromotionMoves(position,potPosition);
+                            Collection<ChessMove> promotionMoves = getPromotionMoves(position, potPosition);
                             possibleMoves.addAll(promotionMoves);
-                        }
-                        else {
+                        } else {
                             ChessMove move = new ChessMove(position, potPosition, null);
                             possibleMoves.add(move);
                         }
@@ -82,16 +79,24 @@ public class PawnMoveCalculator extends ChessPieceMoveCalculator{
 
         return possibleMoves;
     }
-    public boolean IsWhite(ChessBoard chessBoard, ChessPosition position){
+
+    public boolean IsWhite(ChessBoard chessBoard, ChessPosition position) {
         return chessBoard.getPiece(position).getTeamColor() == WHITE;
     }
+
     public boolean moveAllowed(ChessBoard chessBoard, ChessPosition potPosition, ChessGame.TeamColor teamColor, int potMoveColumn) {
         if (potMoveColumn != 0) {
-            if (isEmpty(chessBoard, potPosition)) {return false;}
-            else return isEnemyOccupied(chessBoard, potPosition, teamColor);
-        } else return isEmpty(chessBoard, potPosition);
+            if (isEmpty(chessBoard, potPosition)) {
+                return false;
+            } else {
+                return isEnemyOccupied(chessBoard, potPosition, teamColor);
+            }
+        } else {
+            return isEmpty(chessBoard, potPosition);
+        }
     }
-    public Collection<ChessMove> getPromotionMoves (ChessPosition position, ChessPosition potPosition) {
+
+    public Collection<ChessMove> getPromotionMoves(ChessPosition position, ChessPosition potPosition) {
         Collection<ChessMove> promotionMoves = new ArrayList<>();
         ChessMove promoteQueen = new ChessMove(position, potPosition, ChessPiece.PieceType.QUEEN);
         ChessMove promoteRook = new ChessMove(position, potPosition, ChessPiece.PieceType.ROOK);

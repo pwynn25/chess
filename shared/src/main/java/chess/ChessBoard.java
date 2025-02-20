@@ -14,17 +14,18 @@ import static chess.ChessPiece.PieceType.*;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares = new ChessPiece[8][8];
+    private final ChessPiece[][] squares = new ChessPiece[8][8];
     private ChessPosition whiteKing;
     private ChessPosition blackKing;
 
     public ChessBoard() {
-        this.whiteKing = new ChessPosition(1,5);
-        this.blackKing = new ChessPosition(8,5);
+        this.whiteKing = new ChessPosition(1, 5);
+        this.blackKing = new ChessPosition(8, 5);
     }
+
     public ChessBoard(ChessBoard copyBoard, ChessPosition whiteKingPosition, ChessPosition blackKingPosition) {
 
-        for(int i = 0; i < copyBoard.squares.length; i ++) {
+        for (int i = 0; i < copyBoard.squares.length; i++) {
             squares[i] = Arrays.copyOf(copyBoard.squares[i], copyBoard.squares[i].length);
         }
         this.whiteKing = whiteKingPosition;
@@ -38,10 +39,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()-1][position.getColumn()-1] = piece;
+        squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
+
     public void removePiece(ChessPosition position) {
-        squares[position.getRow()-1][position.getColumn()-1] = null;
+        squares[position.getRow() - 1][position.getColumn() - 1] = null;
     }
 
     /**
@@ -52,7 +54,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()-1][position.getColumn()-1];
+        return squares[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -72,7 +74,7 @@ public class ChessBoard {
         addPiece(new ChessPosition(1, 7), new ChessPiece(WHITE, KNIGHT)); // g1
         addPiece(new ChessPosition(1, 8), new ChessPiece(WHITE, ROOK));   // h1
 
-        for(int i = 1; i < 9; i++) {
+        for (int i = 1; i < 9; i++) {
             addPiece(new ChessPosition(2, i), new ChessPiece(WHITE, PAWN));
         }
 
@@ -86,11 +88,11 @@ public class ChessBoard {
         addPiece(new ChessPosition(8, 7), new ChessPiece(BLACK, KNIGHT));
         addPiece(new ChessPosition(8, 8), new ChessPiece(BLACK, ROOK));
 
-        for(int i = 1; i < 9; i++) {
+        for (int i = 1; i < 9; i++) {
             addPiece(new ChessPosition(7, i), new ChessPiece(BLACK, PAWN));
         }
-        this.whiteKing = new ChessPosition(1,5);
-        this.blackKing = new ChessPosition(8,5);
+        this.whiteKing = new ChessPosition(1, 5);
+        this.blackKing = new ChessPosition(8, 5);
     }
 
     /*This clears the board*/
@@ -98,30 +100,30 @@ public class ChessBoard {
     public void clearBoard() {
         for (int row = 1; row < 9; row++) {
             for (int column = 1; column < 9; column++) {
-                squares[row-1][column-1] = null;
+                squares[row - 1][column - 1] = null;
             }
         }
     }
+
     public ChessPosition getKingPosition(ChessGame.TeamColor team) {
-        if(team == WHITE) {
+        if (team == WHITE) {
             return whiteKing;
-        }
-        else{
+        } else {
             return blackKing;
         }
     }
-    public void setKingPosition(ChessGame.TeamColor team,ChessPosition newPosition) {
-        if(team == WHITE) {
+
+    public void setKingPosition(ChessGame.TeamColor team, ChessPosition newPosition) {
+        if (team == WHITE) {
             whiteKing = newPosition;
-        }
-        else{
+        } else {
             blackKing = newPosition;
         }
     }
 
-// check if the position is on the board
+    // check if the position is on the board
     public boolean isValidPosition(ChessPosition position) {
-        return squares[position.getRow()-1][position.getColumn()-1] == null;
+        return squares[position.getRow() - 1][position.getColumn() - 1] == null;
     }
 
     @Override
