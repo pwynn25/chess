@@ -12,7 +12,7 @@ public class PawnMoveCalculator extends ChessPieceMoveCalculator {
         int positionRow = position.getRow();
         int positionColumn = position.getColumn();
 
-        if (IsWhite(chessBoard, position)) {
+        if (isWhite(chessBoard, position)) {
             int[] directionsColumnWhite = {0, 0, 1, -1};
             int[] directionsRowWhite = {2, 1, 1, 1};
 
@@ -80,7 +80,7 @@ public class PawnMoveCalculator extends ChessPieceMoveCalculator {
         return possibleMoves;
     }
 
-    public boolean IsWhite(ChessBoard chessBoard, ChessPosition position) {
+    public boolean isWhite(ChessBoard chessBoard, ChessPosition position) {
         return chessBoard.getPiece(position).getTeamColor() == WHITE;
     }
 
