@@ -2,14 +2,14 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.AuthData;
+import model.GameData;
 
 import java.util.Collection;
 
 public interface GameDAO {
     void clear();
-    void createGame(String gameName);
+    GameData createGame(String gameName);
     ChessGame getGame(int gameID);
-    Collection<Game> listGames();
+    Collection<GameData> listGames();
     void updateGame(String username);
-    Collection<AuthData>
 }

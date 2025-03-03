@@ -73,7 +73,7 @@ class UserServiceTest {
 
         ExceptionResponse res = assertThrows(ExceptionResponse.class,()->userService.register(r));
 
-        assertEquals(403,res.getStatusCode());
+        assertEquals(400,res.getStatusCode());
         assertEquals("Error: bad request", res.getMessage());
 
     }
@@ -107,10 +107,11 @@ class UserServiceTest {
         UserService userService = new UserService(retrievedUsers,retrievedAuths);
 
         LoginResult l = userService.login(new LoginRequest("pwynn25","pw264"));
-        LoginResult d = userService.login(new LoginRequest("brynn","Elizabeth"));
+        LoginResult d = userService.login(new LoginRequest("pwynn25","pw264"));
 
 
         String authToTest = l.authToken();
+        assertNotEquals(l.authToken(),d.authToken());
         assertEquals("pwynn25",retrievedAuths.getAuth(authToTest).getUsername());
     }
     @Test
@@ -191,8 +192,4 @@ class UserServiceTest {
         }
         assertNotNull(auths.getAuth(res.authToken()));
     }
-
-
-
-
 }

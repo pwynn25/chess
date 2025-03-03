@@ -2,12 +2,10 @@ package server;
 
 import dataaccess.*;
 import exception.ExceptionResponse;
-import handler.ClearHandler;
+import handler.*;
 import handler.ExceptionHandler;
-import handler.LoginHandler;
-import handler.LogoutHandler;
-import handler.RegisterHandler;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -16,6 +14,8 @@ public class Server {
     private RegisterHandler registerHandler;
     private LoginHandler loginHandler;
     private LogoutHandler logoutHandler;
+    private ListGamesHandler listGamesHandler;
+    private CreateGameHandler createGameHandler;
     private ExceptionHandler exceptionHandler;
 
     public Server() {
@@ -27,6 +27,7 @@ public class Server {
 //      Services
         ClearService clearService = new ClearService(users,auths,games);
         UserService userService = new UserService(users,auths);
+        GameService gameService = new GameService(users,auths,games);
 
 
 //        Handlers
@@ -34,7 +35,10 @@ public class Server {
         this.registerHandler = new RegisterHandler(userService);
         this.loginHandler = new LoginHandler(userService);
         this.logoutHandler = new LogoutHandler(userService);
+        this.listGamesHandler = new ListGamesHandler(gameService);
+        this.createGameHandler = new CreateGameHandler(gameService);
         this.exceptionHandler = new ExceptionHandler();
+
     }
 
     public int run(int desiredPort) {
@@ -46,8 +50,8 @@ public class Server {
             //This line initializes the server and can be removed once you have a functioning endpoint
             Spark.delete("/db", (req, res) -> (clearHandler.clearDB(req, res)));
             Spark.delete("/session", (Request req, Response res) -> (logoutHandler.logout(req, res)));
-//        Spark.get("/game");
-//        Spark.post("/game");
+            Spark.get("/game", (Request req, Response res) -> (listGamesHandler.list(req, res)));
+            Spark.post("/game", (Request req, Response res) -> (createGameHandler.create(req, res)));
 //        Spark.put("/game");
             Spark.post("/session", (Request req, Response res) -> (loginHandler.login(req, res)));
             Spark.post("/user", (req, res) -> (registerHandler.register(req, res)));

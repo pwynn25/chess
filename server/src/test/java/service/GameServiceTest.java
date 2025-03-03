@@ -3,6 +3,8 @@ package service;
 import dataaccess.*;
 import exception.ExceptionResponse;
 import model.GameData;
+import model.UserData;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import request.ListRequest;
 import request.RegisterRequest;
@@ -10,8 +12,11 @@ import result.ListResult;
 import result.RegisterResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
 
@@ -25,14 +30,16 @@ public class GameServiceTest {
         String password1 = "pw264";
         String email1 = "jimmydean@gmail.com";
 
-        String[] gameNames = {"losers","saucers","winners","sloppers"};
-        int[] gameIDs = {1,2,3,4};
 
-//        GameData game1 = new GameData(1, gameNames[0]);
+        Set<String> gameNames = new HashSet<>();
+        gameNames.add("losers");
+        gameNames.add("saucers");
+        gameNames.add("winners");
+        gameNames.add("sloppers");
 
 
-        for(int i = 0; i < 4;i++) {
-            games.createGame(gameNames[i]);
+        for(String gameName: gameNames) {
+           games.createGame(gameName);
         }
         GameService gameService = new GameService(users, auths,games);
         UserService userService = new UserService(users,auths);
@@ -44,18 +51,15 @@ public class GameServiceTest {
 
         ListResult listResult = gameService.list(req);
 
+        Collection <GameData> updatedGames = listResult.games();
 
-
-
-
-
-
-
-        // test getGames function: listGames
-
-
-
-
+        for(GameData game: updatedGames) {
+           assertTrue(gameNames.contains(game.getGameName()));
+        }
+    }
+    @Test
+    @DisplayName("No current games exist")
+    public void listGamesFailure() throws ExceptionResponse {
 
     }
 }
