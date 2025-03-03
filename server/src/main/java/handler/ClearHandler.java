@@ -1,17 +1,29 @@
 package handler;
 
+import com.google.gson.Gson;
+import request.ClearRequest;
 import result.ClearResult;
 import service.ClearService;
+import spark.Request;
+import spark.Response;
 
 public class ClearHandler {
-//    convert to an object
+   //    convert to an object
     // clear request most likely
-    ClearRequest request = (ClearRequest)gson.fromJson(reqData, LoginRequest.class);
+    private ClearService clearService;
 
-    ClearService service = new ClearService();
-    ClearResult result = service.login(request);
+    public ClearHandler (ClearService clearService) {
+        this.clearService = clearService;
+    }
 
-return gson.toJson(result);
+    public Object clearDB(Request req, Response res) {
+//        ClearRequest request = new Gson().fromJson(req.body(), ClearRequest.class);
+
+        ClearResult result = clearService.clear();
+        res.status(200);
+
+        return new Gson().toJson(result);
+    }
 
 
 }

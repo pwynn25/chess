@@ -18,12 +18,15 @@ public class ClearService {
 
 
 
-    public ClearResult clear() {
-            users.clear();
-            auths.clear();
-            games.clear();
+    public ClearResult clear(){
 
-            return null;
+        users.clear();
+        auths.clear();
+        games.clear();
+
+        return new ClearResult();
     };
+
+//    service class methods receive request objects as input
 
 }

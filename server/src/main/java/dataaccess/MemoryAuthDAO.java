@@ -2,14 +2,11 @@ package dataaccess;
 
 import model.AuthData;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class MemoryAuthDAO implements AuthDAO{
 
-    private Map<String,AuthData> authDataMap;
+    private Map<String,AuthData> authDataMap = new HashMap<>();
 
     public void clear() {
         authDataMap.clear();
@@ -25,8 +22,11 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void deleteAuth(String username) {
-        authDataMap.remove(username);
+    public void deleteAuth(String authToken) {
+        authDataMap.remove(authToken);
+    }
+    public int getAuthMapSize() {
+        return authDataMap.size();
     }
 
 
