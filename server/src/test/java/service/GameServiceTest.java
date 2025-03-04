@@ -4,19 +4,16 @@ import chess.ChessGame;
 import dataaccess.*;
 import exception.ExceptionResponse;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import request.CreateRequest;
 import request.JoinRequest;
-import request.ListRequest;
 import request.RegisterRequest;
 import result.CreateResult;
 import result.ListResult;
 import result.RegisterResult;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +24,8 @@ public class GameServiceTest {
    UserDAO users = new MemoryUserDAO();
    AuthDAO auths = new MemoryAuthDAO();
    GameDAO games = new MemoryGameDAO();
-   String validAuthToken;
+   String validAuthTokenUser1;
+   String validAuthTokenUser2;
    @BeforeEach
    public void setup() throws ExceptionResponse{
       String username1 = "pwynn25";
@@ -48,9 +46,12 @@ public class GameServiceTest {
 
       UserService userService = new UserService(users,auths);
 
-      RegisterResult res = userService.register(a);
-      this.validAuthToken = res.authToken();
-      userService.register(b);
+      RegisterResult res1 = userService.register(a);
+      this.validAuthTokenUser1 = res1.authToken();
+
+      RegisterResult res2 = userService.register(b);
+      this.validAuthTokenUser2 = res2.authToken();
+
       userService.register(c);
 
       Set<String> gameNames = new HashSet<>();
@@ -185,16 +186,32 @@ public class GameServiceTest {
 
       JoinRequest joinRequest = new JoinRequest(gameID, ChessGame.TeamColor.WHITE);
 
-      gameService.join(validAuthToken,joinRequest);
+      gameService.join(validAuthTokenUser1,joinRequest);
 
       assertEquals("pwynn25",games.getGame(gameID).getWhiteUsername());
-
 
    }
 
 
 //    Join game failure
+@Test
+@DisplayName("Join Game Success")
+public void joinGameFailure() throws ExceptionResponse {
+   UserService userService = new UserService(users,auths);
+   GameService gameService = new GameService(users,auths,games);
 
+   int gameID = 1;
+
+   JoinRequest joinRequest = new JoinRequest(gameID, ChessGame.TeamColor.WHITE);
+
+   gameService.join(validAuthTokenUser1,joinRequest);
+
+   assertEquals("pwynn25",games.getGame(gameID).getWhiteUsername());
+
+   JoinRequest joinRequestFail = new JoinRequest(gameID, ChessGame.TeamColor.WHITE);
+
+   assertThrows(ExceptionResponse.class, () ->gameService.join(validAuthTokenUser1,joinRequestFail));
+}
 
 
 }
