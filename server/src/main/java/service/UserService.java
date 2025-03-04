@@ -25,10 +25,6 @@ public class UserService {
         this.auths = auths;
     }
 
-//    public UserData getUser(RegisterRequest r) {
-//        return users.getUser(r.username());
-//    }
-
 
 
 //     ***     Register   ***
