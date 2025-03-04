@@ -17,9 +17,9 @@ public class ListGamesHandler {
         this.gameService = gameService;
     }
     public Object list(Request req, Response res) throws ExceptionResponse {
-        ListRequest request = new Gson().fromJson(req.body(), ListRequest.class);
+        String authToken = req.headers("authorization");
 
-        ListResult result = gameService.list(request);
+        ListResult result = gameService.list(authToken);
         res.status(200);
 
         return new Gson().toJson(result);

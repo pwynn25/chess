@@ -17,8 +17,8 @@ public class CreateGameHandler {
     }
     public Object create(Request req, Response res) throws ExceptionResponse {
         CreateRequest request = new Gson().fromJson(req.body(), CreateRequest.class);
-
-        CreateResult result = gameService.create(request);
+        String authToken = req.headers("authorization");
+        CreateResult result = gameService.create(request,authToken);
         res.status(200);
 
         return new Gson().toJson(result);

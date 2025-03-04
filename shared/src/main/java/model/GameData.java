@@ -6,8 +6,8 @@ import java.util.Objects;
 
 public class GameData {
     private final int gameID;
-    private final String whiteUsername;
-    private final String blackUsername;
+    private String whiteUsername;
+    private String blackUsername;
     private final String gameName;
     private final ChessGame game;
 
@@ -29,6 +29,14 @@ public class GameData {
 
     public String getBlackUsername() {
         return blackUsername;
+    }
+
+    public void setBlackUsername(String blackUsername) {
+        this.blackUsername = blackUsername;
+    }
+
+    public void setWhiteUsername(String whiteUsername) {
+        this.whiteUsername = whiteUsername;
     }
 
     public String getGameName() {

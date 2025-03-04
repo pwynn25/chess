@@ -9,7 +9,8 @@ import java.util.Collection;
 public interface GameDAO {
     void clear();
     GameData createGame(String gameName);
-    ChessGame getGame(int gameID);
+    GameData getGame(int gameID);
     Collection<GameData> listGames();
-    void updateGame(String username);
+    public void updateGameWhiteUsername(String username, int gameID);
+    public void updateGameBlackUsername (String username, int gameID);
 }

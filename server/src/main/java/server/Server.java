@@ -16,6 +16,8 @@ public class Server {
     private LogoutHandler logoutHandler;
     private ListGamesHandler listGamesHandler;
     private CreateGameHandler createGameHandler;
+    private JoinGameHandler joinGameHandler;
+
     private ExceptionHandler exceptionHandler;
 
     public Server() {
@@ -37,7 +39,9 @@ public class Server {
         this.logoutHandler = new LogoutHandler(userService);
         this.listGamesHandler = new ListGamesHandler(gameService);
         this.createGameHandler = new CreateGameHandler(gameService);
+        this.joinGameHandler = new JoinGameHandler(userService,gameService);
         this.exceptionHandler = new ExceptionHandler();
+
 
     }
 
@@ -50,9 +54,9 @@ public class Server {
             //This line initializes the server and can be removed once you have a functioning endpoint
             Spark.delete("/db", (req, res) -> (clearHandler.clearDB(req, res)));
             Spark.delete("/session", (Request req, Response res) -> (logoutHandler.logout(req, res)));
-            Spark.get("/game", (Request req, Response res) -> (listGamesHandler.list(req, res)));
+            Spark.get("/game", listGamesHandler::list);
             Spark.post("/game", (Request req, Response res) -> (createGameHandler.create(req, res)));
-//        Spark.put("/game");
+            Spark.put("/game",joinGameHandler::join);
             Spark.post("/session", (Request req, Response res) -> (loginHandler.login(req, res)));
             Spark.post("/user", (req, res) -> (registerHandler.register(req, res)));
             Spark.exception(ExceptionResponse.class,(e, req, res) -> exceptionHandler.handleException(e, req, res));

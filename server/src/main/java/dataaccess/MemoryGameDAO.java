@@ -20,18 +20,18 @@ public class MemoryGameDAO implements GameDAO{
         gameDataMap.put(newGame.getGameID(), newGame);
         return newGame;
     };
-    public ChessGame getGame(int gameID) {
-        return null;
+    public GameData getGame(int gameID) {
+        return gameDataMap.get(gameID);
     };
     public Collection<GameData> listGames() {
         return gameDataMap.values();
     };
-    public void updateGame(String username) {
-
+    public void updateGameWhiteUsername(String username, int gameID) {
+        gameDataMap.get(gameID).setWhiteUsername(username);
     };
-    void joinGame(String username, String playerColor, String gameID) {
-
-    };
+    public void updateGameBlackUsername (String username, int gameID) {
+        gameDataMap.get(gameID).setBlackUsername(username);
+    }
     public void clear() {
         gameDataMap.clear();
     }
