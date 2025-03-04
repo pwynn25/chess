@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserServiceTest {
 
-
     public List<Object> registerThreeUsers() throws ExceptionResponse{
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
@@ -192,4 +191,5 @@ class UserServiceTest {
         }
         assertNotNull(auths.getAuth(res.authToken()));
     }
+
 }

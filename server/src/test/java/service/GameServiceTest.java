@@ -1,12 +1,15 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import exception.ExceptionResponse;
 import model.GameData;
 import model.UserData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import request.CreateRequest;
+import request.JoinRequest;
 import request.ListRequest;
 import request.RegisterRequest;
 import result.CreateResult;
@@ -21,7 +24,47 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
+   UserDAO users = new MemoryUserDAO();
+   AuthDAO auths = new MemoryAuthDAO();
+   GameDAO games = new MemoryGameDAO();
+   String validAuthToken;
+   @BeforeEach
+   public void setup() throws ExceptionResponse{
+      String username1 = "pwynn25";
+      String password1 = "pw264";
+      String email1 = "jimmydean@gmail.com";
 
+      String username2 = "brynn";
+      String password2 = "Elizabeth";
+      String email2 = "brynn@gmail.com";
+
+      String username3 = "Nick";
+      String password3 = "2601";
+      String email3 = "debrah@gmail.com";
+
+      RegisterRequest a = new RegisterRequest(username1, password1,email1);
+      RegisterRequest b = new RegisterRequest(username2, password2,email2);
+      RegisterRequest c = new RegisterRequest(username3, password3,email3);
+
+      UserService userService = new UserService(users,auths);
+
+      RegisterResult res = userService.register(a);
+      this.validAuthToken = res.authToken();
+      userService.register(b);
+      userService.register(c);
+
+      Set<String> gameNames = new HashSet<>();
+      gameNames.add("losers");
+      gameNames.add("saucers");
+      gameNames.add("winners");
+      gameNames.add("sloppers");
+
+
+      for(String gameName: gameNames) {
+         games.createGame(gameName);
+      }
+
+   }
     @Test
      public void listGamesSuccess() throws ExceptionResponse {
         UserDAO users = new MemoryUserDAO();
@@ -58,6 +101,15 @@ public class GameServiceTest {
            assertTrue(gameNames.contains(game.getGameName()));
         }
     }
+
+    @Test
+    @DisplayName("ListGameFailure")
+    public void listGamesFailure() throws ExceptionResponse {
+      GameService gameService = new GameService(users,auths,games);
+
+      assertThrows(ExceptionResponse.class, () ->gameService.list("poop"));
+    }
+
     @Test
     @DisplayName("Create Game Success")
     public void createGameSuccess() throws ExceptionResponse {
@@ -122,4 +174,27 @@ public class GameServiceTest {
          assertEquals("Error: bad request",e.getMessage());
       }
    }
+//   join game success
+   @Test
+   @DisplayName("Join Game Success")
+   public void joinGameSuccess() throws ExceptionResponse {
+      UserService userService = new UserService(users,auths);
+      GameService gameService = new GameService(users,auths,games);
+
+      int gameID = 1;
+
+      JoinRequest joinRequest = new JoinRequest(gameID, ChessGame.TeamColor.WHITE);
+
+      gameService.join(validAuthToken,joinRequest);
+
+      assertEquals("pwynn25",games.getGame(gameID).getWhiteUsername());
+
+
+   }
+
+
+//    Join game failure
+
+
+
 }
