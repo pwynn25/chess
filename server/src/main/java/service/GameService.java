@@ -1,14 +1,12 @@
 package service;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ExceptionResponse;
 import model.AuthData;
 import model.GameData;
 import request.CreateRequest;
 import request.JoinRequest;
-import request.ListRequest;
 import result.CreateResult;
 import result.JoinResult;
 import result.ListResult;
