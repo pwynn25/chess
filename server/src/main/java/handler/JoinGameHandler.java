@@ -10,12 +10,12 @@ import spark.Request;
 import spark.Response;
 
 public class JoinGameHandler {
-     private GameService gameService;
+    private GameService gameService;
     private UserService userService;
 
-    public JoinGameHandler(UserService userSerivce, GameService gameService) {
+    public JoinGameHandler(UserService userService, GameService gameService) {
         this.gameService = gameService;
-        this.userService = userSerivce;
+        this.userService = userService;
     }
     public Object join(Request req, Response res) throws ExceptionResponse {
         JoinRequest request = new Gson().fromJson(req.body(), JoinRequest.class);
