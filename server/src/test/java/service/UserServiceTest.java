@@ -33,15 +33,15 @@ class UserServiceTest {
 
         String username1 = "pwynn25";
         String password1 = "pw264";
-        String email1 = "jimmydean@gmail.com";
+        String email1 = "crazyemail";
 
         String username2 = "brynn";
         String password2 = "Elizabeth";
-        String email2 = "brynn@gmail.com";
+        String email2 = "jimbob";
 
         String username3 = "Nick";
-        String password3 = "2601";
-        String email3 = "debrah@gmail.com";
+        String password3 = "21";
+        String email3 = "yuhh";
 
         RegisterRequest a = new RegisterRequest(username1, password1,email1);
         RegisterRequest b = new RegisterRequest(username2, password2,email2);

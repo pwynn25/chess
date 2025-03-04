@@ -25,16 +25,16 @@ public class ClearServiceTest {
         String password1 = "pw264";
         String email1 = "jimmydean@gmail.com";
 
-        String username2 = "brynn";
-        String password2 = "Elizabeth";
-        String email2 = "brynn@gmail.com";
+        String username20 = "brynn";
+        String password20 = "Elizabeth";
+        String email20 = "brynn@gmail.com";
 
         String username3 = "Nick";
         String password3 = "2601";
         String email3 = "debrah@gmail.com";
 
         RegisterRequest a = new RegisterRequest(username1, password1,email1);
-        RegisterRequest b = new RegisterRequest(username2, password2,email2);
+        RegisterRequest b = new RegisterRequest(username20, password20,email20);
         RegisterRequest c = new RegisterRequest(username3, password3,email3);
 
         UserService userService = new UserService(users,auths);
@@ -45,8 +45,8 @@ public class ClearServiceTest {
 
         Set<String> gameNames = new HashSet<>();
         gameNames.add("losers");
-        gameNames.add("saucers");
-        gameNames.add("winners");
+        gameNames.add("tossers");
+        gameNames.add("stoppers");
         gameNames.add("sloppers");
 
 
