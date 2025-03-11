@@ -39,10 +39,13 @@ public class DatabaseManager {
      * Creates the database if it does not already exist.
      */
     static void createDatabase() throws DataAccessException {
-        try {
+        try (var connOne = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
             var statementOne = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
-            var connOne = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            // Create the database
             try (var preparedStatement = connOne.prepareStatement(statementOne)) {
+                preparedStatement.executeUpdate();
+            }
+            try (var preparedStatement = connOne.prepareStatement(useChessDatabase)) {
                 preparedStatement.executeUpdate();
             }
             createTable(createAuthData);
@@ -55,6 +58,9 @@ public class DatabaseManager {
 
     static void createTable(String table) throws DataAccessException {
         try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)){
+            try (var preparedStatement = conn.prepareStatement(useChessDatabase)) {
+                preparedStatement.executeUpdate();
+            }
             try (var preparedStatement = conn.prepareStatement(table)) {
                     preparedStatement.executeUpdate();
             }
@@ -65,40 +71,34 @@ public class DatabaseManager {
 
     private static final String createUserData =
             """
-           USE chess;
-           
-           CREATE TABLE IF NOT EXISTS  UserData (
-              `id` int NOT NULL AUTO_INCREMENT,
+           CREATE TABLE IF NOT EXISTS UserData (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
               PRIMARY KEY (`username`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            )
            """;
 
     private static final String createGameData =
             """
-            USE chess;
-            
-            CREATE TABLE IF NOT EXISTS  gameData (
+            CREATE TABLE IF NOT EXISTS GameData (
               `GameID` int NOT NULL,
               `WhiteUsername` varchar(256),
               `BlackUsername` varchar(256),
               `GameName` varchar(256) NOT NULL,
               `ChessGame` varchar(256) NOT NULL,
               PRIMARY KEY (`GameID`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            )
             """;
     private static final String createAuthData =
             """
-            USE chess;
-            
-            CREATE TABLE IF NOT EXISTS  AuthData (
+            CREATE TABLE IF NOT EXISTS AuthData (
               `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
               PRIMARY KEY (`authToken`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            )
             """;
+    private static final String useChessDatabase = "USE chess;";
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should

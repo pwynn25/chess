@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.sql.SQLException;
+
 import static dataaccess.DatabaseManager.createDatabase;
 
 public class SequelAuthDAO implements AuthDAO{
@@ -16,7 +18,14 @@ public class SequelAuthDAO implements AuthDAO{
 
     @Override
     public void clear() {
-
+        try(var conn = DatabaseManager.getConnection()) {
+            String statement = "TRUNCATE TABLE AuthData;";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        }catch(DataAccessException | SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
