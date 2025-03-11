@@ -35,7 +35,7 @@ public class SequelUserDAO implements UserDAO {
     @Override
     public UserData getUser(String usrnm) {
         UserData user = null;
-        String sql = "select username, password, email FROM UserDATA WHERE username = ?;";
+        String sql = "SELECT username, password, email FROM UserDATA WHERE username = ?;";
         try(var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.prepareStatement(sql)){
                 stmt.setString(1,usrnm);
@@ -61,7 +61,22 @@ public class SequelUserDAO implements UserDAO {
 
     @Override
     public void createUser(UserData userData) {
-
+        String username = userData.getUsername();
+        String password = userData.getPassword();
+        String email = userData.getEmail();
+        String sql = "INSERT INTO UserData (username, password, email) VALUES ( ?, ?, ?);";
+        try(var conn = DatabaseManager.getConnection()) {
+            try (var stmt = conn.prepareStatement(sql)){
+                stmt.setString(1, username);  // Set username
+                stmt.setString(2, password);  // Set password
+                stmt.setString(3, email);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 
