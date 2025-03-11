@@ -19,9 +19,9 @@ import static chess.ChessGame.TeamColor.WHITE;
 
 
 public class GameService {
-    UserDAO users = new MemoryUserDAO();
-    AuthDAO auths = new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    UserDAO users;
+    AuthDAO auths;
+    GameDAO games;
 
     public GameService(UserDAO users,AuthDAO auths, GameDAO games) {
         this.users = users;

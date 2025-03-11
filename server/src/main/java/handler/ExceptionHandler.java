@@ -7,7 +7,6 @@ import spark.Response;
 public class ExceptionHandler {
 
 
-
     public void handleException(ExceptionResponse exResponse, Request req, Response res) {
         res.status(exResponse.getStatusCode());
 

@@ -17,14 +17,16 @@ public class Server {
     private ListGamesHandler listGamesHandler;
     private CreateGameHandler createGameHandler;
     private JoinGameHandler joinGameHandler;
-
     private ExceptionHandler exceptionHandler;
 
     public Server() {
 //      DAOs
-        UserDAO users = new MemoryUserDAO();
-        AuthDAO auths = new MemoryAuthDAO();
-        GameDAO games = new MemoryGameDAO();
+
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths= new SequelAuthDAO();
+        GameDAO games= new SequelGameDAO();
+
+
 
 //      Services
         ClearService clearService = new ClearService(users,auths,games);
