@@ -12,6 +12,9 @@ public class ExceptionResponse extends Exception{
         this.statusCode = statusCode;
         this.message = message;
     }
+    public ExceptionResponse(Exception e) {
+
+    }
 
     public String getMessage() {
         return message;

@@ -95,7 +95,7 @@ public class GameService {
                 throw new ExceptionResponse(403,"Error: already taken");
             }
             else {
-                updateGameHelper(playerColor, game.getGameID(), this.games,username);
+                updateGameHelper(playerColor, game.getGameID(),username);
             }
 
         }
@@ -104,7 +104,7 @@ public class GameService {
                 throw new ExceptionResponse(403,"Error: already taken");
             }
             else {
-                updateGameHelper(playerColor, game.getGameID(), this.games,username);
+                updateGameHelper(playerColor, game.getGameID(),username);
             }
         }
     }
@@ -112,12 +112,16 @@ public class GameService {
     public boolean isOccupied(String player) {
         return player != null;
     }
-    public void updateGameHelper(ChessGame.TeamColor playerColor, int gameID, GameDAO games,String username) throws ExceptionResponse{
+    // remove GameDAO because we already have it is an attribute of the class
+    private void updateGameHelper(ChessGame.TeamColor playerColor, int gameID,String username) throws ExceptionResponse{
         if(playerColor == WHITE) {
             games.updateGameWhiteUsername(username,gameID);
         }
-        else {
+        else if (playerColor == BLACK){
             games.updateGameBlackUsername(username,gameID);
+        }
+        else {
+            throw new ExceptionResponse(401,"Error: bad request");
         }
     }
 

@@ -2,7 +2,7 @@ package dataaccess;
 
 import exception.ExceptionResponse;
 import model.AuthData;
-import model.UserData;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,6 +51,7 @@ public class SequelAuthDAO implements AuthDAO{
                 throw new ExceptionResponse(500,e.getMessage());
             }
         } catch (SQLException | DataAccessException e) {
+
             throw new ExceptionResponse(500, "There was an Error accessing the database");
         }
     }

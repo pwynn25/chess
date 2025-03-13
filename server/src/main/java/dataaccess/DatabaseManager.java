@@ -44,15 +44,12 @@ public class DatabaseManager {
             try (var preparedStatement = connOne.prepareStatement(statementOne)) {
                 preparedStatement.executeUpdate();
             }
-            try (var preparedStatement = connOne.prepareStatement(useChessDatabase)) {
-                preparedStatement.executeUpdate();
-            }
-            createTable(createAuthData);
-            createTable(createGameData);
-            createTable(createUserData);
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
+        createTable(createAuthData);
+        createTable(createGameData);
+        createTable(createUserData);
     }
 
     static void createTable(String table) throws DataAccessException {
@@ -67,13 +64,6 @@ public class DatabaseManager {
     }
 
     public static void useChess() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()){
-            try (var preparedStatement = conn.prepareStatement(useChessDatabase)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch(SQLException e){
-            throw new DataAccessException(e.getMessage());
-        }
     }
 
     private static final String createUserData =
@@ -93,7 +83,7 @@ public class DatabaseManager {
               `WhiteUsername` varchar(256),
               `BlackUsername` varchar(256),
               `GameName` varchar(256) NOT NULL,
-              `ChessGame` varchar(256) NOT NULL,
+              `ChessGame` LONGTEXT NOT NULL,
               PRIMARY KEY (`GameID`)
             )
             """;
@@ -105,7 +95,6 @@ public class DatabaseManager {
               PRIMARY KEY (`authToken`)
             )
             """;
-    private static final String useChessDatabase = "USE chess;";
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should
@@ -119,7 +108,8 @@ public class DatabaseManager {
      * </code>
      */
     public static Connection getConnection() throws DataAccessException {
-        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)){
+        try {
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             conn.setCatalog(DATABASE_NAME);
             return conn;
         } catch (SQLException e) {
