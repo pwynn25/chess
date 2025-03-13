@@ -1,15 +1,14 @@
-package dataaccessSEQUEL;
+package dataaccesssequel;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import exception.ExceptionResponse;
-import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public abstract class dataaccessSQLAbstractClass {
+public abstract class dataaccesssequel {
     public final String checkNumRowsCommandAuths = "SELECT COUNT(*) FROM AuthData;";
     public final String checkNumRowsCommandUsers = "SELECT COUNT(*) FROM UserData;";
     public final String checkNumRowsCommandGames = "SELECT COUNT(*) FROM GameData;";

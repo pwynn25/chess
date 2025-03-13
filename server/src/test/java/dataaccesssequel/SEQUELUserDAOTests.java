@@ -1,4 +1,4 @@
-package dataaccessSEQUEL;
+package dataaccesssequel;
 
 import dataaccess.SequelUserDAO;
 import dataaccess.UserDAO;
@@ -6,11 +6,10 @@ import exception.ExceptionResponse;
 import model.UserData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import service.ClearService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SEQUELUserDAOTests extends dataaccessSQLAbstractClass{
+public class SEQUELUserDAOTests extends dataaccesssequel {
     @Test
     @DisplayName("Successful Clear")
     public void clearSuccess() {

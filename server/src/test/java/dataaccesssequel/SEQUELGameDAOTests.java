@@ -1,4 +1,4 @@
-package dataaccessSEQUEL;
+package dataaccesssequel;
 
 
 import dataaccess.GameDAO;
@@ -15,9 +15,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.UserService.generateToken;
 
-public class SEQUELGameDAOTests extends dataaccessSQLAbstractClass{
+public class SEQUELGameDAOTests extends dataaccesssequel {
     @BeforeEach
     public void clear() {
         GameDAO games = new SequelGameDAO();

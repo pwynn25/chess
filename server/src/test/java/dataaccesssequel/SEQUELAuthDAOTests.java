@@ -1,17 +1,16 @@
-package dataaccessSEQUEL;
+package dataaccesssequel;
 
 import dataaccess.AuthDAO;
 import dataaccess.SequelAuthDAO;
 import exception.ExceptionResponse;
 import model.AuthData;
-import model.UserData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static service.UserService.generateToken;
 
-public class SEQUELAuthDAOTests extends dataaccessSQLAbstractClass {
+public class SEQUELAuthDAOTests extends dataaccesssequel {
     @Test
     @DisplayName("Successful Clear")
     public void clearSuccess() {
@@ -92,7 +91,7 @@ public class SEQUELAuthDAOTests extends dataaccessSQLAbstractClass {
         try {
             auths.createAuth(authData1);
             auths.createAuth(authData2);
-            assertThrows(ExceptionResponse.class,()->auths.getAuth("wrongToken"));
+            assertNull(auths.getAuth("wrongToken"));
             auths.clear();
         }
         catch(ExceptionResponse e) {
