@@ -56,20 +56,18 @@ public class DatabaseManager {
     }
 
     static void createTable(String table) throws DataAccessException {
-        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)){
-            try (var preparedStatement = conn.prepareStatement(useChessDatabase)) {
-                preparedStatement.executeUpdate();
-            }
+        try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement(table)) {
                     preparedStatement.executeUpdate();
             }
         } catch(SQLException e){
-                throw new DataAccessException(e.getMessage());
+            e.printStackTrace();
+            throw new DataAccessException(e.getMessage());
         }
     }
 
     public static void useChess() throws DataAccessException {
-        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)){
+        try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement(useChessDatabase)) {
                 preparedStatement.executeUpdate();
             }

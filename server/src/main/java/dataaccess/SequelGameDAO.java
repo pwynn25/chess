@@ -56,7 +56,6 @@ public class SequelGameDAO implements GameDAO{
             throw new ExceptionResponse(400, "Error: bad request");
         }
         try(var conn = DatabaseManager.getConnection()) {
-            DatabaseManager.useChess();
             try (var stmt = conn.prepareStatement(createGame)){
                 stmt.setInt(1, currentGameID);  // Set username
                 stmt.setString(2, gameName);  // Set password
@@ -77,7 +76,6 @@ public class SequelGameDAO implements GameDAO{
     public GameData getGame(int gameID) throws ExceptionResponse{
         GameData gameData;
         try(var conn = DatabaseManager.getConnection()) {
-            DatabaseManager.useChess();
             try (var stmt = conn.prepareStatement(getGame)) {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
@@ -110,7 +108,6 @@ public class SequelGameDAO implements GameDAO{
     public Collection<GameData> listGames() throws ExceptionResponse{
         Collection<GameData> games = new ArrayList<>();
         try(var conn = DatabaseManager.getConnection()) {
-            DatabaseManager.useChess();
             try (var stmt = conn.prepareStatement(listGames)) {
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -151,7 +148,6 @@ public class SequelGameDAO implements GameDAO{
 
     public void updateUsernameHelper(String username, int gameID, String tableName) throws ExceptionResponse{
         try(var conn = DatabaseManager.getConnection()) {
-            DatabaseManager.useChess();
             try (var stmt = conn.prepareStatement(upDateUsername)){
                 stmt.setString(1, tableName);
                 stmt.setString(2, username);  // Set username
