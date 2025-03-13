@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 import static dataaccess.DatabaseManager.*;
 
+
 public class SequelUserDAO implements UserDAO {
     public SequelUserDAO()  {
         try {
