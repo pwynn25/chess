@@ -16,7 +16,7 @@ public abstract class dataaccessSQLAbstractClass {
 
     public int numRows;
 
-    public boolean checkNumRows(String table_name) throws ExceptionResponse {
+    public int checkNumRows(String table_name) throws ExceptionResponse {
         try (var conn = DatabaseManager.getConnection()) {
             DatabaseManager.useChess();
             String checkNumRowsCommand;
@@ -40,6 +40,6 @@ public abstract class dataaccessSQLAbstractClass {
         } catch (SQLException | DataAccessException e) {
             throw new ExceptionResponse(500, e.getMessage());
         }
-        return numRows == 0;
+        return numRows;
     }
 }
