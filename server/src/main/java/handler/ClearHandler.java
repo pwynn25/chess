@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import exception.ExceptionResponse;
 import request.ClearRequest;
 import result.ClearResult;
 import service.ClearService;
@@ -16,8 +17,7 @@ public class ClearHandler {
         this.clearService = clearService;
     }
 
-    public Object clearDB(Request req, Response res) {
-//        ClearRequest request = new Gson().fromJson(req.body(), ClearRequest.class);
+    public Object clearDB(Request req, Response res) throws ExceptionResponse {
 
         ClearResult result = clearService.clear();
         res.status(200);

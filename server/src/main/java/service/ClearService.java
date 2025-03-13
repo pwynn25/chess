@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import exception.ExceptionResponse;
 import result.ClearResult;
 
 public class ClearService {
@@ -18,7 +19,7 @@ public class ClearService {
 
 
 
-    public ClearResult clear(){
+    public ClearResult clear() throws ExceptionResponse {
 
         users.clear();
         auths.clear();

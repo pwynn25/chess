@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ClearServiceTest {
-    UserDAO users = new MemoryUserDAO();
-    AuthDAO auths = new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    UserDAO users = new SequelUserDAO();
+    AuthDAO auths = new SequelAuthDAO();
+    GameDAO games = new SequelGameDAO();
     @BeforeEach
     public void setup() throws ExceptionResponse{
         String username1 = "pwynn25";
@@ -58,11 +58,12 @@ public class ClearServiceTest {
 
     @Test
     @DisplayName("Successful Clear")
-    public void clearSuccess() {
+    public void clearSuccess() throws ExceptionResponse{
         ClearService clearService = new ClearService(users,auths,games);
         clearService.clear();
 
         assertNull(games.getGame(1));
+
         assertNull(users.getUser("Nick"));
     }
 

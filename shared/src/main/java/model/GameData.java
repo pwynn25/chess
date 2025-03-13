@@ -9,7 +9,7 @@ public class GameData {
     private String whiteUsername;
     private String blackUsername;
     private final String gameName;
-    private final ChessGame game;
+    private ChessGame game;
 
     public GameData(int gameID,  String gameName) {
         this.gameID = gameID;
@@ -45,6 +45,9 @@ public class GameData {
 
     public ChessGame getGame() {
         return game;
+    }
+    public void setGame(ChessGame game) {
+        this.game = game;
     }
 
     @Override

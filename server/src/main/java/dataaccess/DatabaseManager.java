@@ -1,6 +1,5 @@
 package dataaccess;
 
-import exception.ExceptionResponse;
 
 import java.sql.*;
 import java.util.Properties;
@@ -69,6 +68,16 @@ public class DatabaseManager {
         }
     }
 
+    public static void useChess() throws DataAccessException {
+        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)){
+            try (var preparedStatement = conn.prepareStatement(useChessDatabase)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch(SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     private static final String createUserData =
             """
            CREATE TABLE IF NOT EXISTS UserData (
@@ -93,7 +102,7 @@ public class DatabaseManager {
     private static final String createAuthData =
             """
             CREATE TABLE IF NOT EXISTS AuthData (
-              `authToken` varchar(256) NOT NULL,
+              `AuthToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
               PRIMARY KEY (`authToken`)
             )
@@ -111,9 +120,8 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
-        try {
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+    public static Connection getConnection() throws DataAccessException {
+        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)){
             conn.setCatalog(DATABASE_NAME);
             return conn;
         } catch (SQLException e) {

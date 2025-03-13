@@ -1,10 +1,9 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import exception.ExceptionResponse;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import request.LoginRequest;
@@ -21,10 +20,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserServiceTest {
+    @BeforeEach
+        public  void clearDatabase() {
+        AuthDAO auths = new SequelAuthDAO();
+        UserDAO users = new SequelUserDAO();
+
+        try {
+            users.clear();
+            auths.clear();
+        }catch(ExceptionResponse e) {
+            System.out.println("Thrown exception: " + e.getMessage());
+        }
+    }
+
 
     public List<Object> registerThreeUsers() throws ExceptionResponse{
-        UserDAO users = new MemoryUserDAO();
-        AuthDAO auths = new MemoryAuthDAO();
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths = new SequelAuthDAO();
 
         List<Object> list = new ArrayList<>();
         list.add(users);
@@ -58,8 +70,8 @@ class UserServiceTest {
     @Test
     @DisplayName("Password null")
     void registerNegative(){
-        UserDAO users = new MemoryUserDAO();
-        AuthDAO auths = new MemoryAuthDAO();
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths = new SequelAuthDAO();
 
 
         String username = "pwynn25";
@@ -78,8 +90,9 @@ class UserServiceTest {
     @Test
     @DisplayName("registerPositive")
     void registerPositive() throws ExceptionResponse {
-        UserDAO users = new MemoryUserDAO();
-        AuthDAO auths = new MemoryAuthDAO();
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths = new SequelAuthDAO();
+
 
         String username = "pwynn25";
         String password = "131878";
@@ -113,6 +126,7 @@ class UserServiceTest {
         assertEquals("pwynn25",retrievedAuths.getAuth(authToTest).getUsername());
     }
     @Test
+    @DisplayName("login a non-registered user")
     void loginNegative() throws ExceptionResponse{
 
         List<Object> list = registerThreeUsers();
@@ -141,8 +155,8 @@ class UserServiceTest {
     @Test
     void logoutPositive() throws ExceptionResponse{
 // Register one user then try and log them out;
-        UserDAO users = new MemoryUserDAO();
-        AuthDAO auths = new MemoryAuthDAO();
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths = new SequelAuthDAO();
 
         String username1 = "pwynn25";
         String password1 = "pw264";
@@ -168,8 +182,8 @@ class UserServiceTest {
     @Test
     void logoutNegative() throws ExceptionResponse{
         // Register one user then try and log them out;
-        UserDAO users = new MemoryUserDAO();
-        AuthDAO auths = new MemoryAuthDAO();
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths = new SequelAuthDAO();
 
         String username1 = "pwynn25";
         String password1 = "pw264";

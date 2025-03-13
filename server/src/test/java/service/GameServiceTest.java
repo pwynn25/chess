@@ -21,9 +21,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
-   UserDAO users = new MemoryUserDAO();
-   AuthDAO auths = new MemoryAuthDAO();
-   GameDAO games = new MemoryGameDAO();
+   UserDAO users = new SequelUserDAO();
+   AuthDAO auths = new SequelAuthDAO();
+   GameDAO games = new SequelGameDAO();
    String validAuthTokenUser1;
    String validAuthTokenUser2;
    @BeforeEach

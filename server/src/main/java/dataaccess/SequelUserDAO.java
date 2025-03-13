@@ -2,10 +2,8 @@ package dataaccess;
 
 import exception.ExceptionResponse;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 
-import javax.management.RuntimeErrorException;
-import java.sql.DriverManager;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,10 +31,11 @@ public class SequelUserDAO implements UserDAO {
     }
 
     @Override
-    public UserData getUser(String usrnm) {
+    public UserData getUser(String usrnm) throws ExceptionResponse{
         UserData user = null;
         String sql = "SELECT username, password, email FROM UserDATA WHERE username = ?;";
         try(var conn = DatabaseManager.getConnection()) {
+            DatabaseManager.useChess();
             try (var stmt = conn.prepareStatement(sql)){
                 stmt.setString(1,usrnm);
                 try (ResultSet rs = stmt.executeQuery()) {
@@ -46,38 +45,42 @@ public class SequelUserDAO implements UserDAO {
                         String email = rs.getString(3);
                         user = new UserData(username, password, email);
                     }
+                    else {
+                        return null;
+                    }
 
-                } catch (SQLException e) {
-                    throw new RuntimeException(e.getMessage());
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new ExceptionResponse(500,e.getMessage());
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ExceptionResponse(500, "There was an Error accessing the database");
         }
         return user;
     }
 
     @Override
-    public void createUser(UserData userData) {
+    public void createUser(UserData userData) throws ExceptionResponse{
         String username = userData.getUsername();
         String password = userData.getPassword();
         String email = userData.getEmail();
+
         String sql = "INSERT INTO UserData (username, password, email) VALUES ( ?, ?, ?);";
         try(var conn = DatabaseManager.getConnection()) {
+            DatabaseManager.useChess();
             try (var stmt = conn.prepareStatement(sql)){
                 stmt.setString(1, username);  // Set username
                 stmt.setString(2, password);  // Set password
                 stmt.setString(3, email);
                 stmt.executeUpdate();
             } catch (SQLException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new ExceptionResponse(500,e.getMessage());
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ExceptionResponse(500, "There was an Error accessing the database");
         }
     }
+
 
 
 

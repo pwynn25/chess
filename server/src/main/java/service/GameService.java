@@ -28,7 +28,7 @@ public class GameService {
         this.auths = auths;
         this.games = games;
     }
-    public boolean isAuthorized (String authToken) {
+    public boolean isAuthorized (String authToken) throws ExceptionResponse{
         return auths.getAuth(authToken) != null;
     }
 
@@ -112,7 +112,7 @@ public class GameService {
     public boolean isOccupied(String player) {
         return player != null;
     }
-    public void updateGameHelper(ChessGame.TeamColor playerColor, int gameID, GameDAO games,String username) {
+    public void updateGameHelper(ChessGame.TeamColor playerColor, int gameID, GameDAO games,String username) throws ExceptionResponse{
         if(playerColor == WHITE) {
             games.updateGameWhiteUsername(username,gameID);
         }

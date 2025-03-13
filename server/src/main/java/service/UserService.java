@@ -1,11 +1,11 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.ExceptionResponse;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
@@ -35,7 +35,8 @@ public class UserService {
             throw new ExceptionResponse(400, "Error: bad request");
         }
         if (user == null) {
-            UserData newUser = new UserData(r.username(), r.password(), r.email());
+            String hashedPassword = BCrypt.hashpw(r.password(), BCrypt.gensalt());
+            UserData newUser = new UserData(r.username(), hashedPassword, r.email());
             users.createUser(newUser);
             String authToken = generateToken();
             AuthData authData = new AuthData(authToken,newUser.getUsername());
@@ -52,7 +53,8 @@ public class UserService {
     public LoginResult login(LoginRequest l) throws ExceptionResponse{
         UserData user = users.getUser(l.username());
         if(user != null ) {
-            if(Objects.equals(user.getPassword(), l.password())) {
+            boolean userVerified = verifyUser(l.password(),user.getPassword());
+            if(userVerified) {
                 String newAuthToken = generateToken();
                 AuthData authData = new AuthData(newAuthToken, user.getUsername());
                 auths.createAuth(authData);
@@ -66,7 +68,9 @@ public class UserService {
             throw new ExceptionResponse(401,"Error: unauthorized");
         }
     }
-
+    boolean verifyUser(String password,  String hashedPassword) {
+        return BCrypt.checkpw(password, hashedPassword);
+    }
 //  ***  Logout ***
     public LogoutResult logout(LogoutRequest l) throws ExceptionResponse{
         AuthData authData = auths.getAuth(l.authToken());
@@ -87,6 +91,5 @@ public class UserService {
     public static String generateToken() {
         return UUID.randomUUID().toString();
     }
-
 
 }

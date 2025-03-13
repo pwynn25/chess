@@ -1,16 +1,17 @@
 package dataaccess;
 
 import chess.ChessGame;
+import exception.ExceptionResponse;
 import model.AuthData;
 import model.GameData;
 
 import java.util.Collection;
 
 public interface GameDAO {
-    void clear();
-    GameData createGame(String gameName);
-    GameData getGame(int gameID);
-    Collection<GameData> listGames();
-    public void updateGameWhiteUsername(String username, int gameID);
-    public void updateGameBlackUsername (String username, int gameID);
+    void clear() throws ExceptionResponse;
+    GameData createGame(String gameName) throws ExceptionResponse;
+    GameData getGame(int gameID) throws ExceptionResponse;
+    Collection<GameData> listGames() throws ExceptionResponse;
+    public void updateGameWhiteUsername(String username, int gameID) throws ExceptionResponse;
+    public void updateGameBlackUsername (String username, int gameID) throws ExceptionResponse;
 }
