@@ -10,11 +10,11 @@ import java.sql.SQLException;
 import static dataaccess.DatabaseManager.createDatabase;
 
 public class SequelAuthDAO implements AuthDAO{
-    private static final String createAuthData = "INSERT INTO AuthData (authToken, username) VALUES ( ?, ?);";
+    private static final String CreateAuthData = "INSERT INTO AuthData (authToken, username) VALUES ( ?, ?);";
 
-    private static final String getAuthData = "SELECT authToken, username FROM AuthDATA WHERE authToken = ?;";
+    private static final String GetAuthData = "SELECT authToken, username FROM AuthDATA WHERE authToken = ?;";
 
-    private static final String deleteAuth = "DELETE FROM AuthData WHERE authToken = ?;";
+    private static final String DeleteAuth = "DELETE FROM AuthData WHERE authToken = ?;";
 
 
     public SequelAuthDAO() {
@@ -43,7 +43,7 @@ public class SequelAuthDAO implements AuthDAO{
         String authToken = authData.getAuth();
 
         try(var conn = DatabaseManager.getConnection()) {
-            try (var stmt = conn.prepareStatement(createAuthData)){
+            try (var stmt = conn.prepareStatement(CreateAuthData)){
                 stmt.setString(1, authToken);  // Set username
                 stmt.setString(2, username);  // Set password
                 stmt.executeUpdate();
@@ -60,7 +60,7 @@ public class SequelAuthDAO implements AuthDAO{
     public AuthData getAuth(String authTkn) throws ExceptionResponse{
         AuthData authData;
         try(var conn = DatabaseManager.getConnection()) {
-            try (var stmt = conn.prepareStatement(getAuthData)){
+            try (var stmt = conn.prepareStatement(GetAuthData)){
                 stmt.setString(1,authTkn);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
@@ -84,7 +84,7 @@ public class SequelAuthDAO implements AuthDAO{
     @Override
     public void deleteAuth(String authToken) throws ExceptionResponse{
         try(var conn = DatabaseManager.getConnection()) {
-            try(var stmt = conn.prepareStatement(deleteAuth)){
+            try(var stmt = conn.prepareStatement(DeleteAuth)){
                 stmt.setString(1,authToken);
                 int rowsDeleted = stmt.executeUpdate();
                 if(rowsDeleted == 0) {
