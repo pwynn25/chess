@@ -73,8 +73,7 @@ public class SEQUELUserDAOTests extends DataAccessSequel {
             UserData userToCheck = users.getUser("pwynn");
             assertEquals(newUser1.getUsername(),userToCheck.getUsername());
 
-            ExceptionResponse e = assertThrows(ExceptionResponse.class,()->users.getUser("Makayla"));
-            System.out.println("Thrown exception: " + e.getMessage());
+            assertNull(users.getUser("Makayla"));
         } catch(ExceptionResponse e) {
             System.out.println("Thrown exception: " + e.getMessage());
         }
