@@ -129,9 +129,6 @@ public class SequelGameDAO implements GameDAO{
                         games.add(game);
                         numGames++;
                     }
-                    if (numGames == 0) {
-                        return null;
-                    }
                 } catch(NullPointerException e) {
                     throw new ExceptionResponse(500, e.getMessage());
                 }

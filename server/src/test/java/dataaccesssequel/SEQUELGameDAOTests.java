@@ -89,7 +89,13 @@ public class SEQUELGameDAOTests extends DataAccessSequel {
         try {
             Collection<GameData> gameList =  games.listGames();
 
-            assertNull(gameList);
+            if(gameList.isEmpty()) {
+                assertTrue(true);
+            }
+            else {
+                fail();
+            }
+
         } catch (ExceptionResponse e) {
             System.out.println("Thrown exception: " + e.getMessage());
         }
