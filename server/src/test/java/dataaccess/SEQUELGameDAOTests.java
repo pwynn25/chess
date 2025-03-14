@@ -1,9 +1,6 @@
-package dataaccesssequel;
+package dataaccess;
 
 
-import dataaccess.GameDAO;
-
-import dataaccess.SequelGameDAO;
 import exception.ExceptionResponse;
 
 import model.GameData;

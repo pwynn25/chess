@@ -1,7 +1,5 @@
-package dataaccesssequel;
+package dataaccess;
 
-import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
 import exception.ExceptionResponse;
 
 import java.sql.ResultSet;

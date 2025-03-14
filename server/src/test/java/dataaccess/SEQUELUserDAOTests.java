@@ -1,7 +1,5 @@
-package dataaccesssequel;
+package dataaccess;
 
-import dataaccess.SequelUserDAO;
-import dataaccess.UserDAO;
 import exception.ExceptionResponse;
 import model.UserData;
 import org.junit.jupiter.api.DisplayName;
