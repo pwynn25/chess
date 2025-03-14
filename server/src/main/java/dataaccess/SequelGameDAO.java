@@ -16,10 +16,10 @@ import static dataaccess.DatabaseManager.createDatabase;
 
 public class SequelGameDAO implements GameDAO{
     private int gameID = 1;
-    private final String CreateGame = "INSERT INTO GameData (GameID, GameName, ChessGame) VALUES ( ?, ?, ?);";
-    private final String GetGame = "SELECT * FROM GameData WHERE GameID = ?;";
-    private final String ListGames = "SELECT * FROM GameData";
-    private final String UpDateUsernameWhite = """
+    private static final String CREATE_GAME = "INSERT INTO GameData (GameID, GameName, ChessGame) VALUES ( ?, ?, ?);";
+    private static final String GET_GAME = "SELECT * FROM GameData WHERE GameID = ?;";
+    private static final String LIST_GAMES = "SELECT * FROM GameData";
+    private static final String UPDATE_USERNAME_WHITE = """
             UPDATE GameData
             SET WhiteUsername = ?
             WHERE GameID = ?;""";
@@ -60,7 +60,7 @@ public class SequelGameDAO implements GameDAO{
             throw new ExceptionResponse(400, "Error: bad request");
         }
         try(var conn = DatabaseManager.getConnection()) {
-            try (var stmt = conn.prepareStatement(CreateGame)){
+            try (var stmt = conn.prepareStatement(CREATE_GAME)){
                 stmt.setInt(1, currentGameID);  // Set username
                 stmt.setString(2, gameName);  // Set password
                 stmt.setString(3, gameJSON);
@@ -81,7 +81,7 @@ public class SequelGameDAO implements GameDAO{
     public GameData getGame(int gameID) throws ExceptionResponse{
         GameData gameData;
         try(var conn = DatabaseManager.getConnection()) {
-            try (var stmt = conn.prepareStatement(GetGame)) {
+            try (var stmt = conn.prepareStatement(GET_GAME)) {
                 stmt.setInt(1, gameID);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
@@ -114,18 +114,23 @@ public class SequelGameDAO implements GameDAO{
     public Collection<GameData> listGames() throws ExceptionResponse{
         Collection<GameData> games = new ArrayList<>();
         try(var conn = DatabaseManager.getConnection()) {
-            try (var stmt = conn.prepareStatement(ListGames)) {
+            try (var stmt = conn.prepareStatement(LIST_GAMES)) {
                 try (ResultSet rs = stmt.executeQuery()) {
+                    int numGames = 0;
                     while (rs.next()) {
-                        int ID = rs.getInt(1);
+                        int gameID = rs.getInt(1);
                         String whiteUsername = rs.getString(2);
                         String blackUsername = rs.getString(3);
                         String gameName = rs.getString(4);
 
-                        GameData game = new GameData(ID, gameName);
+                        GameData game = new GameData(gameID, gameName);
                         game.setBlackUsername(blackUsername);
                         game.setWhiteUsername(whiteUsername);
                         games.add(game);
+                        numGames++;
+                    }
+                    if (numGames == 0) {
+                        return null;
                     }
                 } catch(NullPointerException e) {
                     throw new ExceptionResponse(500, e.getMessage());
@@ -152,7 +157,7 @@ public class SequelGameDAO implements GameDAO{
     public void updateUsernameHelper(String username, int gameID, String playerColor) throws ExceptionResponse{
         String updateUsername;
         if(Objects.equals(playerColor, "White")) {
-            updateUsername = UpDateUsernameWhite;
+            updateUsername = UPDATE_USERNAME_WHITE;
         } else if(Objects.equals(playerColor, "Black")) {
             updateUsername = UpDateUsernameBlack;
         }

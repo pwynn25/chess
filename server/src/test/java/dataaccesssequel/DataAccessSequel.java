@@ -8,20 +8,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public abstract class dataaccesssequel {
+public abstract class DataAccessSequel {
     public final String checkNumRowsCommandAuths = "SELECT COUNT(*) FROM AuthData;";
     public final String checkNumRowsCommandUsers = "SELECT COUNT(*) FROM UserData;";
     public final String checkNumRowsCommandGames = "SELECT COUNT(*) FROM GameData;";
 
     public int numRows;
 
-    public int checkNumRows(String table_name) throws ExceptionResponse {
+    public int checkNumRows(String tableName) throws ExceptionResponse {
         try (var conn = DatabaseManager.getConnection()) {
             DatabaseManager.useChess();
             String checkNumRowsCommand;
-            if (table_name == "AuthData") {
+            if (tableName == "AuthData") {
                 checkNumRowsCommand = checkNumRowsCommandAuths;
-            } else if (table_name == "UserData") {
+            } else if (tableName == "UserData") {
                 checkNumRowsCommand = checkNumRowsCommandUsers;
             }else {
                 checkNumRowsCommand = checkNumRowsCommandGames;

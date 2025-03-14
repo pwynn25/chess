@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static service.UserService.generateToken;
 
-public class SEQUELAuthDAOTests extends dataaccesssequel {
+public class SEQUELAuthDAOTests extends DataAccessSequel {
     @Test
     @DisplayName("Successful Clear")
     public void clearSuccess() {

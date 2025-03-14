@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SEQUELGameDAOTests extends dataaccesssequel {
+public class SEQUELGameDAOTests extends DataAccessSequel {
     @BeforeEach
     public void clear() {
         GameDAO games = new SequelGameDAO();
@@ -85,14 +85,11 @@ public class SEQUELGameDAOTests extends dataaccesssequel {
     @Test
     void listGamesFailure() {
         GameDAO games = new SequelGameDAO();
-        String gameName = "game1";
+        String gameName = "game2";
         try {
-            games.createGame(gameName);
             Collection<GameData> gameList =  games.listGames();
 
-            for (GameData game : gameList) {
-                assertEquals(gameName,game.getGameName());
-            }
+            assertNull(gameList);
         } catch (ExceptionResponse e) {
             System.out.println("Thrown exception: " + e.getMessage());
         }
