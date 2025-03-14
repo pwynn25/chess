@@ -23,7 +23,7 @@ public class SequelGameDAO implements GameDAO{
             UPDATE GameData
             SET WhiteUsername = ?
             WHERE GameID = ?;""";
-    private final String UpDateUsernameBlack = """
+    private static final String UPDATE_USERNAME_BLACK = """
             UPDATE GameData
             SET BlackUsername = ?
             WHERE GameID = ?;""";
@@ -156,7 +156,7 @@ public class SequelGameDAO implements GameDAO{
         if(Objects.equals(playerColor, "White")) {
             updateUsername = UPDATE_USERNAME_WHITE;
         } else if(Objects.equals(playerColor, "Black")) {
-            updateUsername = UpDateUsernameBlack;
+            updateUsername = UPDATE_USERNAME_BLACK;
         }
         else {
             throw new ExceptionResponse(401, "Error: invalid request");

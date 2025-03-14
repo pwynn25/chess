@@ -47,9 +47,9 @@ public class DatabaseManager {
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
-        createTable(createAuthData);
-        createTable(createGameData);
-        createTable(createUserData);
+        createTable(CREATE_AUTH_DATA);
+        createTable(CREATE_GAME_DATA);
+        createTable(CREATE_USER_DATA);
     }
 
     static void createTable(String table) throws DataAccessException {
@@ -66,7 +66,7 @@ public class DatabaseManager {
     public static void useChess() throws DataAccessException {
     }
 
-    private static final String createUserData =
+    private static final String CREATE_USER_DATA =
             """
            CREATE TABLE IF NOT EXISTS UserData (
               `username` varchar(256) NOT NULL,
@@ -76,7 +76,7 @@ public class DatabaseManager {
             )
            """;
 
-    private static final String createGameData =
+    private static final String CREATE_GAME_DATA =
             """
             CREATE TABLE IF NOT EXISTS GameData (
               `GameID` int NOT NULL,
@@ -87,7 +87,7 @@ public class DatabaseManager {
               PRIMARY KEY (`GameID`)
             )
             """;
-    private static final String createAuthData =
+    private static final String CREATE_AUTH_DATA =
             """
             CREATE TABLE IF NOT EXISTS AuthData (
               `AuthToken` varchar(256) NOT NULL,
