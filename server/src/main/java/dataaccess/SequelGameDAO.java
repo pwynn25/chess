@@ -163,7 +163,10 @@ public class SequelGameDAO implements GameDAO{
             try (var stmt = conn.prepareStatement(updateUsername)){
                 stmt.setString(1, username);  // Set username
                 stmt.setInt(2, gameID);  // Set password
-                stmt.executeUpdate();
+                int rowsUpdated = stmt.executeUpdate();
+                if(rowsUpdated == 0) {
+                    throw new ExceptionResponse(500, "Error: database was not updated");
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);

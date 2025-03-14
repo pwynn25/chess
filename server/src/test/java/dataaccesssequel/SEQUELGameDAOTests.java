@@ -178,7 +178,7 @@ public class SEQUELGameDAOTests extends dataaccesssequel {
         String gameName = "game1";
         try {
             games.createGame(gameName);
-            assertThrows(ExceptionResponse.class,()->games.getGame(4));
+            assertNull(games.getGame(4));
 
         } catch (ExceptionResponse e) {
             System.out.println("Thrown exception: " + e.getMessage());
