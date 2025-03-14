@@ -12,7 +12,7 @@ import static dataaccess.DatabaseManager.createDatabase;
 public class SequelAuthDAO implements AuthDAO{
     private static final String INSERT = "INSERT INTO AuthData (authToken, username) VALUES ( ?, ?);";
 
-    private static final String GET_AUTH_DATA = "SELECT authToken, username FROM AuthDATA WHERE authToken = ?;";
+    private static final String GET_AUTH_DATA = "SELECT authToken, username FROM AuthData WHERE authToken = ?;";
 
     private static final String DELETE_AUTH = "DELETE FROM AuthData WHERE authToken = ?;";
 

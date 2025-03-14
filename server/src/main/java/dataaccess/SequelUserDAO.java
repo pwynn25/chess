@@ -34,7 +34,7 @@ public class SequelUserDAO implements UserDAO {
     @Override
     public UserData getUser(String usrnm) throws ExceptionResponse{
         UserData user = null;
-        String sql = "SELECT username, password, email FROM UserDATA WHERE username = ?;";
+        String sql = "SELECT username, password, email FROM UserData WHERE username = ?;";
         try(var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.prepareStatement(sql)){
                 stmt.setString(1,usrnm);
