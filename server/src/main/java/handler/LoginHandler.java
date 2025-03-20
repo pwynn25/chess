@@ -23,7 +23,7 @@ public class LoginHandler {
         res.header("authorization",result.authToken());
 
         res.status(200);
-
+        // the return value from the handler automatically becomes the body
         return new Gson().toJson(result);
     }
 }

@@ -20,9 +20,6 @@ public class ExceptionResponse extends Exception{
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     public int getStatusCode() {
         return statusCode;

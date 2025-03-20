@@ -27,22 +27,22 @@ public class Repl {
 
             var result = "";
 
-            while (!result.equals("quit")) {
-                String line = scanner.nextLine();
-                if (userStatus == LOGGED_OUT) {
-                    client  = new PreLoginClient(line, urlServer);
-                } else if (userStatus == LOGGED_IN) {
-                    client = new PostLoginClient(line, urlServer);
-                }
-
-                try{
-                    result = client.eval(line);
-                    System.out.print(SET_TEXT_COLOR_BLUE + result);
-                } catch {
-
-                }
-
-
-            }
+//            while (!result.equals("quit")) {
+//                String line = scanner.nextLine();
+//                if (userStatus == LOGGED_OUT) {
+//                    client  = new PreLoginClient(line, urlServer);
+//                } else if (userStatus == LOGGED_IN) {
+//                    client = new PostLoginClient(line, urlServer);
+//                }
+//
+//                try{
+//                    result = client.eval(line);
+//                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+//                } catch (InputError e){
+//                    System.out.println(e.getErrorMessage());
+//                }
+//
+//
+//            }
         }
 }
