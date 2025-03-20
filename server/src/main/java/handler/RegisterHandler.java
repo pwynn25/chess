@@ -18,6 +18,7 @@ public class RegisterHandler {
         RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
 
         RegisterResult result = userService.register(request);
+        res.header("authorization",result.authToken());
         res.status(200);
 
         return new Gson().toJson(result);

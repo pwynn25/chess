@@ -20,6 +20,7 @@ public class LoginHandler {
         LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
 
         LoginResult result = userService.login(request);
+        res.header("authorization",result.authToken());
 
         res.status(200);
 
