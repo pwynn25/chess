@@ -87,7 +87,6 @@ public class GameService {
             throw new ExceptionResponse(401,"Error: unauthorized");
         }
     }
-
     public void checkAndSet(ChessGame.TeamColor playerColor, String username, GameData game) throws ExceptionResponse{
 
         if(playerColor == WHITE) {
@@ -97,7 +96,6 @@ public class GameService {
             else {
                 updateGameHelper(playerColor, game.getGameID(),username);
             }
-
         }
         else {
             if(isOccupied(game.getBlackUsername())) {

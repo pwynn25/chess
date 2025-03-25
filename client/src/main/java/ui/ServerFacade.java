@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
-
+    private String authToken;
     private String serverUrl;
 
     public ServerFacade(String url){
@@ -27,7 +27,9 @@ public class ServerFacade {
     public RegisterResult register(String username, String password, String email) throws ServerException{
         RegisterRequest r = new RegisterRequest(username,password,email);
         var path = "/user";
-        return makeRequestPlusGetResponse("POST",path,r,RegisterResult.class);
+        RegisterResult res = makeRequestPlusGetResponse("POST",path,r,RegisterResult.class);
+        this.authToken = res.authToken();
+        return res;
     }
     public JoinResult join(JoinRequest r) throws ServerException{
         var path = "/game";
@@ -41,13 +43,15 @@ public class ServerFacade {
         var path = "/session";
         return makeRequestPlusGetResponse("DELETE",path,r,LogoutResult.class);
     }
-    public CreateResult create(JoinRequest r) throws ServerException{
+    public CreateResult create(CreateRequest r) throws ServerException{
         var path = "/game";
         return makeRequestPlusGetResponse("POST",path,r,CreateResult.class);
     }
     public LoginResult login(LoginRequest r) throws ServerException{
         var path = "/session";
-        return makeRequestPlusGetResponse("POST",path,r,LoginResult.class);
+        LoginResult res = makeRequestPlusGetResponse("POST",path,r,LoginResult.class);
+        this.authToken = res.authToken();
+        return res;
     }
 
     public <T> T makeRequestPlusGetResponse(String method, String path, Object request, Class<T> responseClass) throws ServerException{
@@ -56,27 +60,44 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
-            writeBody(request, http);
+            writeBodyAndHeader(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (ServerException ex) {
-            System.out.println("An Error talking to the server occurred");
             throw ex;
         } catch (Exception ex) {
             throw new ServerException(500, ex.getMessage());
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private void writeBodyAndHeader(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
+            addAuthToken(request,http);
             System.out.println(request);
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
+        }
+    }
+    private void addAuthToken(Object request, HttpURLConnection http) {
+
+        if (request instanceof JoinRequest) {
+            http.addRequestProperty("authorization",this.authToken);
+        }
+        if (request instanceof CreateRequest) {
+            http.addRequestProperty("authorization",this.authToken);
+        }
+        if (request instanceof ListRequest) {
+            http.addRequestProperty("authorization",this.authToken);
+        }
+        if (request instanceof LogoutRequest) {
+            http.addRequestProperty("authorization",this.authToken);
+        }
+        if (request instanceof ClearRequest) {
+            http.addRequestProperty("authorization",this.authToken);
         }
     }
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ServerException {

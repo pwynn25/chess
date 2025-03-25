@@ -5,7 +5,6 @@ import exception.ExceptionResponse;
 import request.CreateRequest;
 import request.ListRequest;
 import result.CreateResult;
-import result.ListResult;
 import service.GameService;
 import spark.Request;
 import spark.Response;
