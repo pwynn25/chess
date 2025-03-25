@@ -1,5 +1,7 @@
 package client;
 
+import dataaccess.*;
+import exception.ExceptionResponse;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerException;
@@ -40,6 +42,20 @@ public class ServerFacadeTests {
             fail();
         } catch (ServerException e){
             assertEquals(403,e.getStatusCode());
+            System.out.println(e.getMessage());
+        }
+    }
+    @BeforeEach
+    public void clear() {
+        GameDAO games = new SequelGameDAO();
+        UserDAO users = new SequelUserDAO();
+        AuthDAO auths = new SequelAuthDAO();
+        try {
+            games.clear();
+            users.clear();
+            auths.clear();
+        } catch (ExceptionResponse e) {
+            System.out.println("Thrown exception: " + e.getMessage());
         }
     }
 

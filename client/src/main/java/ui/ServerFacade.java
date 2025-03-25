@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import exception.ExceptionResponse;
+import exception.ExceptionResponseNoThrow;
 import request.*;
 import result.*;
 
@@ -12,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
@@ -60,7 +62,8 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (ServerException ex) {
-            System.out.println("An Error talking to the server occured");
+            System.out.println("An Error talking to the server occurred");
+            throw ex;
         } catch (Exception ex) {
             throw new ServerException(500, ex.getMessage());
         }
@@ -80,12 +83,12 @@ public class ServerFacade {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErrJSON = http.getErrorStream()) {
-                if (respErrJSON != null) {
-                    var respError = new Gson().fromJson(respErrJSON.toString(), ExceptionResponse.class);
-                    throw new ServerException(500,respError.getMessage());
-                }
+                ExceptionResponseNoThrow respError = new Gson().fromJson(new InputStreamReader(respErrJSON), ExceptionResponseNoThrow.class);
+                throw new ServerException(status,respError.getMessage());
             }
-            throw new ServerException(status, "other failure: " + status);
+//            catch (Exception e) {
+//                throw new ServerException(500,e.getMessage());
+//            }
         }
     }
     private boolean isSuccessful(int status) {

@@ -4,22 +4,18 @@ import com.google.gson.Gson;
 
 import java.util.Map;
 
-public class ExceptionResponse extends Exception{
-     private int statusCode;
+public class ExceptionResponseNoThrow {
     private String message;
+    private int statusCode;
 
-    public ExceptionResponse(int statusCode, String message) {
-        this.statusCode = statusCode;
-        this.message = message;
-    }
-    public ExceptionResponse(Exception e) {
-
+    public ExceptionResponseNoThrow(ExceptionResponse ex) {
+        this.statusCode = ex.getStatusCode();
+        this.message = ex.getMessage();
     }
 
     public String getMessage() {
         return message;
     }
-
 
     public int getStatusCode() {
         return statusCode;

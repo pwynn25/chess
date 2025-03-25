@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.*;
 import exception.ExceptionResponse;
+import exception.ExceptionResponseNoThrow;
 import handler.*;
 import handler.ExceptionHandler;
 import service.ClearService;
