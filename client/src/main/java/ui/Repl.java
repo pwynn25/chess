@@ -8,41 +8,45 @@ import static ui.UserStatus.userStatus.LOGGED_OUT;
 
 public class Repl {
     private String urlServer;
+    private Client client;
+    private UserStatus.userStatus userStatus;
+    public ServerFacade server;
 
     public Repl(String urlServer) {
         this.urlServer = urlServer;
+        this.userStatus = LOGGED_OUT;
+        this.server = new ServerFacade(urlServer);
+        this.client = new PreLoginClient(this);
     }
 
-        private Client client;
-        private UserStatus.userStatus userStatus;
 
-        public Repl() {
-            this.userStatus = LOGGED_OUT;
+    public void run() {
+        System.out.println("Welcome to the game!");
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+
+        System.out.println("Options:");
+        System.out.println("Login as an existing user: \"login\" <USERNAME> <PASSWORD>");
+        System.out.println("Register a new user: \"register\" <USERNAME> <PASSWORD> <EMAIL>");
+        System.out.println("Exit the program: \"quit\"");
+        System.out.println("Print this message: \"help\"");
+
+        while (!result.equals("quit")) {
+            String line = scanner.nextLine();
+            switch (userStatus) {
+                case LOGGED_IN -> client = new PostLoginClient(this);
+                case LOGGED_OUT -> client = new PreLoginClient(this);
+                case IN_GAME -> client = new InGameClient(urlServer, this);
+            }
+
+            result = client.eval(line);
+            System.out.print(SET_TEXT_COLOR_BLUE + result);
         }
-
-        public void run() {
-            System.out.println("Welcome to the game!");
-
-            Scanner scanner = new Scanner(System.in);
-
-            var result = "";
-
-//            while (!result.equals("quit")) {
-//                String line = scanner.nextLine();
-//                if (userStatus == LOGGED_OUT) {
-//                    client  = new PreLoginClient(line, urlServer);
-//                } else if (userStatus == LOGGED_IN) {
-//                    client = new PostLoginClient(line, urlServer);
-//                }
-//
-//                try{
-//                    result = client.eval(line);
-//                    System.out.print(SET_TEXT_COLOR_BLUE + result);
-//                } catch (InputError e){
-//                    System.out.println(e.getErrorMessage());
-//                }
-//
-//
-//            }
-        }
+        System.out.println("Thanks for playing");
+        System.exit(0);
+    }
+    public void setUserStatus(UserStatus.userStatus status) {
+        this.userStatus = status;
+    }
 }

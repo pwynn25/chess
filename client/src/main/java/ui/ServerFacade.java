@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ServerFacade {
     private String authToken;
@@ -77,8 +78,10 @@ public class ServerFacade {
             addAuthToken(request,http);
             System.out.println(request);
             String reqData = new Gson().toJson(request);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
+            if(!(request instanceof ListRequest)) {
+                try (OutputStream reqBody = http.getOutputStream()) {
+                    reqBody.write(reqData.getBytes());
+                }
             }
         }
     }

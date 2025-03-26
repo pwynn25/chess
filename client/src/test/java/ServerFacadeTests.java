@@ -3,14 +3,8 @@ package client;
 import dataaccess.*;
 import exception.ExceptionResponse;
 import org.junit.jupiter.api.*;
-import request.CreateRequest;
-import request.JoinRequest;
-import request.LoginRequest;
-import request.LogoutRequest;
-import result.CreateResult;
-import result.JoinResult;
-import result.LoginResult;
-import result.RegisterResult;
+import request.*;
+import result.*;
 import server.Server;
 import ui.ServerException;
 import ui.ServerFacade;
@@ -166,25 +160,40 @@ public class ServerFacadeTests {
         }
     }
     @Test
+    @DisplayName("ListGames")
+    public void posList() throws ServerException {
+        facade.register("pwynn","mama","pwynn@rutgers.com");
+        CreateRequest createReq = new CreateRequest("jim");
+        CreateRequest createReq1 = new CreateRequest("mom");
+        try {
+            facade.create(createReq);
+            facade.create(createReq1);
+            ListRequest reqL = new ListRequest();
+            ListResult listResult = facade.list(reqL);
+            assertEquals(2,listResult.games().size());
+            System.out.println(listResult);
+        } catch (ServerException e){
+            System.out.println(e.getStatusCode());
+            System.out.println(e.getMessage());
+
+        }
+    }
+    @Test
+    @DisplayName("ListGames")
     public void negList() throws ServerException {
         facade.register("pwynn","mama","pwynn@rutgers.com");
         CreateRequest createReq = new CreateRequest("jim");
         CreateRequest createReq1 = new CreateRequest("mom");
         try {
-            CreateResult createResult = facade.create(createReq);
-            assertTrue(createResult.gameID() > 0);
-            facade.create(createReq1);
-
-            facade.list
+            ListRequest reqL = new ListRequest();
+            ListResult listResult = facade.list(reqL);
+            assertEquals(0,listResult.games().size());
+            System.out.println(listResult);
         } catch (ServerException e){
-            assertEquals(400,e.getStatusCode());
+            System.out.println(e.getStatusCode());
             System.out.println(e.getMessage());
         }
     }
-
-
-
-
 
     @BeforeEach
     public void clear() {

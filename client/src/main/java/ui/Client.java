@@ -1,5 +1,6 @@
 package ui;
 
-public abstract class  Client {
+public interface Client {
 
+    public String eval(String line);
 }
