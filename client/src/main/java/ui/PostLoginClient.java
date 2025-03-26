@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import model.GameData;
 import request.CreateRequest;
 import request.JoinRequest;
 import request.ListRequest;
@@ -33,7 +34,7 @@ public class PostLoginClient implements Client{
                 case "list" -> list();
                 case "join" -> join();
                 case "observe" -> observe(params);
-                case "quit"-> "quit";
+                case "quit"-> "quit\n";
                 default -> help();
             };
         }
@@ -69,8 +70,18 @@ public class PostLoginClient implements Client{
     }
     private String list() {
         try {
+            int gameCounter = 1;
             ListResult listResult= server.list(new ListRequest());
-            return listResult.toString() + "\n";
+            StringBuilder sb = new StringBuilder();
+            for (GameData game : listResult.games()) {
+                sb.append(gameCounter).append(" Game ID: ").append(game.getGameID())
+                        .append(" White Player: ").append(game.getWhiteUsername())
+                        .append(" Black Player: ").append(game.getBlackUsername());
+                sb.append("\n");
+                gameCounter++;
+            }
+            String gameList = sb.toString();
+            return gameList + "\n";
         }
         catch(ServerException e) {
             return e.getMessage() + "\n";
