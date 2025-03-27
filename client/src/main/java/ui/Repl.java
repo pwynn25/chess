@@ -1,9 +1,9 @@
 package ui;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-import static ui.UserStatus.userStatus.LOGGED_IN;
 import static ui.UserStatus.userStatus.LOGGED_OUT;
 
 public class Repl {
@@ -11,6 +11,7 @@ public class Repl {
     private Client client;
     private UserStatus.userStatus userStatus;
     public ServerFacade server;
+    public HashMap<Integer, Integer> gameMap = new HashMap<>();
 
     public Repl(String urlServer) {
         this.urlServer = urlServer;

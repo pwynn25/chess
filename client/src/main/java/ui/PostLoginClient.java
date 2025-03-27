@@ -10,6 +10,7 @@ import result.JoinResult;
 import result.ListResult;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -18,11 +19,13 @@ import static chess.ChessGame.TeamColor.WHITE;
 public class PostLoginClient implements Client{
     private final ServerFacade server;
     private final Repl repl;
+    private HashMap<Integer, Integer> gameMap;
 
 
     public PostLoginClient(Repl repl) {
         this.server = repl.server;
         this.repl = repl;
+        this.gameMap = repl.gameMap;
     }
     public String eval(String input){
         try {
@@ -78,10 +81,11 @@ public class PostLoginClient implements Client{
             ListResult listResult= server.list(new ListRequest());
             StringBuilder sb = new StringBuilder();
             for (GameData game : listResult.games()) {
-                sb.append(gameCounter).append(" Game ID: ").append(game.getGameID())
+                sb.append(gameCounter).append(" Game Name: ").append(game.getGameName())
                         .append(" White Player: ").append(game.getWhiteUsername())
                         .append(" Black Player: ").append(game.getBlackUsername());
                 sb.append("\n");
+                gameMap.put(gameCounter, game.getGameID());
                 gameCounter++;
             }
             String gameList = sb.toString();
@@ -94,10 +98,15 @@ public class PostLoginClient implements Client{
     private String join(String...params) throws InputError{
         try{
             if(params.length ==2) {
-                int gameID;
+                int gameID = 0;
+                int gameNum;
                 ChessGame.TeamColor teamColor;
                 try {
-                    gameID = Integer.parseInt(params[0]);
+                    gameNum = Integer.parseInt(params[0]);
+                    gameID = gameMap.get(gameNum);
+                    if (gameID == 0) {
+                        throw new InputError("The game you specified does not exist, please try again.");
+                    }
                 }
                 catch (NumberFormatException e) {
                     throw new InputError("Join a game and begin playing: \"join\" <ID> [WHITE | BLACK]\n");
@@ -115,7 +124,7 @@ public class PostLoginClient implements Client{
                 JoinResult joinResult = server.join(new JoinRequest(gameID, teamColor));
                 String boardString = boardToString(new BoardPrinter(),joinResult.game().getGame(), teamColor);
 
-                return "You joined game " + joinResult.game().getGameID() + "\n" + boardString;
+                return "You joined game " + gameNum + "\n" + boardString;
             }
             else {
                 throw new InputError("Join a game and begin playing: \"join\" <ID> [WHITE | BLACK]\n");
