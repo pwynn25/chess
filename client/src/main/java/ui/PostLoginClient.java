@@ -10,6 +10,7 @@ import result.JoinResult;
 import result.ListResult;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -138,8 +139,38 @@ public class PostLoginClient implements Client{
     private String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
         return printer.printBoard(game.getBoard(),teamColor);
     }
+
+
     private String observe(String...params) throws InputError{
-        return "This feature has yet to be implemented! \n";
+        Collection<GameData> games;
+        int gameIDToObserve;
+        if(params.length != 1) {
+            throw new InputError("Observe a game without playing: \"observe\" <ID>");
+        }
+        try{
+            try {
+                gameIDToObserve = gameMap.get(Integer.parseInt(params[0]));
+            }
+            catch (NumberFormatException e) {
+                throw new InputError("Observe a game without playing: \"observe\" <ID>");
+            }
+            catch (NullPointerException e) {
+                throw new InputError("That game does not exist");
+            }
+            ListResult listResult= server.list(new ListRequest());
+            games = listResult.games();
+
+            for(GameData game: games) {
+                if(game.getGameID() == gameIDToObserve) {
+                    String boardString = boardToString(new BoardPrinter(),game.getGame(), WHITE);
+                    return "You are observing game " + params[0] + "\n" + boardString;
+                }
+            }
+            throw new InputError("That game does not exist");
+        }
+        catch(ServerException e) {
+            return e.getMessage() + "\n";
+        }
     }
 
 
