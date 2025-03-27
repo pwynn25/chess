@@ -1,5 +1,3 @@
-package client;
-
 import dataaccess.*;
 import exception.ExceptionResponse;
 import org.junit.jupiter.api.*;
