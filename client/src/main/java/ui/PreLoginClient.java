@@ -1,10 +1,11 @@
 package ui;
 
 import request.LoginRequest;
-import result.LoginResult;
 import result.RegisterResult;
 
 import java.util.Arrays;
+
+import static ui.Repl.UserStatus.LOGGED_IN;
 
 public class PreLoginClient implements Client{
     private final ServerFacade server;
@@ -37,7 +38,7 @@ public class PreLoginClient implements Client{
         if(params.length == 3) {
             try {
                 RegisterResult regRes = server.register(params[0], params[1], params[2]);
-                this.repl.setUserStatus(UserStatus.userStatus.LOGGED_IN);
+                this.repl.setUserStatus(LOGGED_IN);
                 return regRes.username() + " has registered and logged in. \n";
             }
             catch (ServerException e) {
@@ -53,7 +54,7 @@ public class PreLoginClient implements Client{
             LoginRequest logReq = new LoginRequest(params[0],params[1]);
             try {
                 server.login(logReq);
-                this.repl.setUserStatus(UserStatus.userStatus.LOGGED_IN);
+                this.repl.setUserStatus(LOGGED_IN);
                 return "successful login\n";
             }
             catch (ServerException e) {

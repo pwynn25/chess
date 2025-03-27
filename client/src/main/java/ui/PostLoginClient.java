@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
+import static ui.Repl.UserStatus.LOGGED_OUT;
 
 public class PostLoginClient implements Client{
     private final ServerFacade server;
@@ -55,7 +56,7 @@ public class PostLoginClient implements Client{
     private String logout(){
         try {
             server.logout(new LogoutRequest("auth"));
-            repl.setUserStatus(UserStatus.userStatus.LOGGED_OUT);
+            repl.setUserStatus(LOGGED_OUT);
             return "You successfully logged out. \n";
         }
         catch(ServerException e) {

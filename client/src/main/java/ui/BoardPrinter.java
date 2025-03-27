@@ -7,15 +7,12 @@ import chess.ChessPosition;
 import static ui.EscapeSequences.*;
 
 public class BoardPrinter {
-    private final int[] WHITE= {8,1,1,8};
-    private final int[] BLACK={1,8,8,1};
-    private final String[] LETTERS = {"a","b","c","d","e","f","g","h"};
-    private final int[] NUMBERS = {1,2,3,4,5,6,7,8};
+    private static final int[] WHITE= {8,1,1,8};
+    private static final int[] BLACK={1,8,8,1};
+    private static final String[] LETTERS = {"a","b","c","d","e","f","g","h"};
+    private static final int[] NUMBERS = {1,2,3,4,5,6,7,8};
 
 
-//    public String printEdgesAndBoard() {
-//
-//    }
     public String printTopAndBottomEdge(boolean isWhite) {
         StringBuilder sb = new StringBuilder(SET_TEXT_COLOR_WHITE);
         sb.append("   ");

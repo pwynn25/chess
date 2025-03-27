@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-import static ui.UserStatus.userStatus.LOGGED_OUT;
+import static ui.Repl.UserStatus.LOGGED_OUT;
 
 public class Repl {
     private String urlServer;
     private Client client;
-    private UserStatus.userStatus userStatus;
+    private UserStatus userStatus;
     public ServerFacade server;
     public HashMap<Integer, Integer> gameMap = new HashMap<>();
 
@@ -47,7 +47,12 @@ public class Repl {
         System.out.println("\nThanks for playing");
         System.exit(0);
     }
-    public void setUserStatus(UserStatus.userStatus status) {
+    public void setUserStatus(UserStatus status) {
         this.userStatus = status;
+    }
+    public enum UserStatus {
+        LOGGED_IN,
+        IN_GAME,
+        LOGGED_OUT
     }
 }
