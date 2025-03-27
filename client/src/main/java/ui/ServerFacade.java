@@ -105,9 +105,9 @@ public class ServerFacade {
                 ExceptionResponseNoThrow respError = new Gson().fromJson(new InputStreamReader(respErrJSON), ExceptionResponseNoThrow.class);
                 throw new ServerException(status,respError.getMessage());
             }
-            catch (Exception e) {
-                throw new ServerException(500,e.getMessage());
-            }
+//            catch (Exception e) {
+//                throw new ServerException(500,e.getMessage());
+//            }
         }
     }
     private boolean isSuccessful(int status) {
