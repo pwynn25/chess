@@ -38,7 +38,7 @@ public class Repl {
             switch (userStatus) {
                 case LOGGED_IN -> client = new PostLoginClient(this);
                 case LOGGED_OUT -> client = new PreLoginClient(this);
-                case IN_GAME -> client = new InGameClient(urlServer, this);
+                case IN_GAME -> client = new InGameClient(this);
             }
 
             result = client.eval(line);
