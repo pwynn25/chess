@@ -113,6 +113,9 @@ public class PostLoginClient implements Client{
                 catch (NumberFormatException e) {
                     throw new InputError("Join a game and begin playing: \"join\" <ID> [WHITE | BLACK]\n");
                 }
+                catch (NullPointerException e) {
+                    throw new InputError("That game does not exist");
+                }
                 if (Objects.equals(params[1], "white")) {
                     teamColor = WHITE;
                 }
@@ -179,7 +182,7 @@ public class PostLoginClient implements Client{
         return """
                     Options:
                     Join a game and begin playing: "join" <ID> [WHITE | BLACK]
-                    logout: "r", "register" <USERNAME> <PASSWORD> <EMAIL>
+                    logout: "logout"
                     Create a new game: "create" <GAMENAME>
                     List games: "list"
                     quit: "quit"

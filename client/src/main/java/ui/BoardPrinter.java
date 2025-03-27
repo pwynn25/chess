@@ -87,10 +87,10 @@ public class BoardPrinter {
         String bgColor;
         if ((i + j) % 2 == 0) {
             // Light square
-            bgColor = SET_BG_COLOR_WHITE; // You can adjust this color for light squares
+            bgColor = SET_BG_COLOR_BLUE; // You can adjust this color for light squares
         } else {
             // Dark square
-            bgColor = SET_BG_COLOR_BLUE; // You can set this to a color of your choice for dark squares
+            bgColor = SET_BG_COLOR_WHITE; // You can set this to a color of your choice for dark squares
         }
         return bgColor;
     }
