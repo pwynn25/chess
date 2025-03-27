@@ -19,7 +19,8 @@ public class PostLoginClient implements Client{
     private final ServerFacade server;
     private final Repl repl;
 
-    public PostLoginClient( Repl repl) {
+
+    public PostLoginClient(Repl repl) {
         this.server = repl.server;
         this.repl = repl;
     }
@@ -107,8 +108,11 @@ public class PostLoginClient implements Client{
                 else {
                     throw new InputError("Join a game and begin playing: \"join\" <ID> [WHITE | BLACK]\n");
                 }
+
                 JoinResult joinResult = server.join(new JoinRequest(gameID, teamColor));
-                return joinResult.toString() + "\n";
+                String boardString = boardToString(new BoardPrinter(),joinResult.game().getGame(), teamColor);
+
+                return "You joined game " + joinResult.game().getGameID() + "\n" + boardString;
             }
             else {
                 throw new InputError("Join a game and begin playing: \"join\" <ID> [WHITE | BLACK]\n");
@@ -118,6 +122,16 @@ public class PostLoginClient implements Client{
                 return e.getMessage() + "\n";
         }
 
+    }
+    private String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
+        String boardString;
+        if(teamColor == WHITE) {
+            boardString = printer.printBoardWhiteDown(game.getBoard());
+        }
+        else {
+            boardString = printer.printBoardBlackDown(game.getBoard());
+        }
+        return boardString;
     }
     private String observe(String...params) throws InputError{
         return "This feature has yet to be implemented! \n";

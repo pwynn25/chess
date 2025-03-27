@@ -80,7 +80,7 @@ public class GameService {
                     throw new ExceptionResponse(400,"Error: bad request");
                 }
                 // add player to game
-                return new JoinResult(gameToJoin.getGameID());
+                return new JoinResult(gameToJoin);
             }
         }
         else {

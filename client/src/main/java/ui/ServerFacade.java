@@ -71,7 +71,7 @@ public class ServerFacade {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             addAuthToken(request,http);
-            System.out.println(request);
+//            System.out.println(request);
             String reqData = new Gson().toJson(request);
             if(!(request instanceof ListRequest)) {
                 try (OutputStream reqBody = http.getOutputStream()) {

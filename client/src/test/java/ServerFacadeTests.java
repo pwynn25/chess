@@ -137,7 +137,7 @@ public class ServerFacadeTests {
             assertTrue(createResult.gameID() > 0);
             JoinRequest joinReq = new JoinRequest(createResult.gameID(),WHITE);
             JoinResult joinRes = facade.join(joinReq);
-            assertTrue(joinRes.gameID() > 0);
+            assertTrue(joinRes.game().getGameID() > 0);
         } catch (ServerException e){
             fail();
         }
