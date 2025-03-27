@@ -127,14 +127,7 @@ public class PostLoginClient implements Client{
 
     }
     private String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
-        String boardString;
-        if(teamColor == WHITE) {
-            boardString = printer.printBoardWhiteDown(game.getBoard());
-        }
-        else {
-            boardString = printer.printBoardBlackDown(game.getBoard());
-        }
-        return boardString;
+        return printer.printBoard(game.getBoard(),teamColor);
     }
     private String observe(String...params) throws InputError{
         return "This feature has yet to be implemented! \n";
