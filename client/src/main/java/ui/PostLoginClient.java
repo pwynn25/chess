@@ -33,9 +33,9 @@ public class PostLoginClient implements Client{
                 case "logout" -> logout();
                 case"create" -> create(params);
                 case "list" -> list();
-                case "join" -> join();
+                case "join" -> join(params);
                 case "observe" -> observe(params);
-                case "quit"-> "quit\n";
+                case "quit"-> quit();
                 default -> help();
             };
         }
@@ -43,6 +43,9 @@ public class PostLoginClient implements Client{
             return e.getErrorMessage() + "\n";
         }
 
+    }
+    private String quit() {
+        return "quit";
     }
 
     private String logout(){

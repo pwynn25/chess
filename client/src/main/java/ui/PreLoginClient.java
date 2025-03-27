@@ -66,7 +66,7 @@ public class PreLoginClient implements Client{
         }
     }
     private String quit() {
-        return "quit\n";
+        return "quit";
     }
 
     public String help() {

@@ -43,7 +43,7 @@ public class Repl {
             result = client.eval(line);
             System.out.print(SET_TEXT_COLOR_BLUE + result);
         }
-        System.out.println("Thanks for playing");
+        System.out.println("\nThanks for playing");
         System.exit(0);
     }
     public void setUserStatus(UserStatus.userStatus status) {
