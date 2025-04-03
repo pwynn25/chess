@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import request.LoginRequest;
 import result.RegisterResult;
 
@@ -59,7 +60,7 @@ public class PreLoginClient implements Client{
             }
             catch (ServerException e) {
 
-                return "Server error: " + e.getMessage() + "\n";
+                return e.getMessage() + "\n";
             }
         }
         else {
@@ -78,6 +79,9 @@ public class PreLoginClient implements Client{
                     Exit the program: "quit"
                     Print this message: "help"
                """;
+    }
+    public String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
+        return printer.printBoard(game.getBoard(),teamColor);
     }
 
 }

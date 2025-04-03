@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.util.Map;
 
 public class ExceptionResponse extends Exception{
-     private int statusCode;
+    private int statusCode;
     private String message;
 
     public ExceptionResponse(int statusCode, String message) {

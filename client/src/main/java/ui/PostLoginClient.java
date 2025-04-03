@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
+import static ui.Repl.UserStatus.IN_GAME;
 import static ui.Repl.UserStatus.LOGGED_OUT;
 
 public class PostLoginClient implements Client{
@@ -127,8 +128,9 @@ public class PostLoginClient implements Client{
                 }
 
                 JoinResult joinResult = server.join(new JoinRequest(gameID, teamColor));
+                repl.setUserStatus(IN_GAME);
+                repl.setGame(joinResult.game().getGame());
                 String boardString = boardToString(new BoardPrinter(),joinResult.game().getGame(), teamColor);
-
                 return "You joined game " + gameNum + "\n" + boardString;
             }
             else {
@@ -140,7 +142,7 @@ public class PostLoginClient implements Client{
         }
 
     }
-    private String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
+    public String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
         return printer.printBoard(game.getBoard(),teamColor);
     }
 
