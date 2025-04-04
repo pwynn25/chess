@@ -16,11 +16,13 @@ public class ChessGame {
 
     private TeamColor teamTurn;
     private ChessBoard currentBoard;
+    private boolean isActive;
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.currentBoard = new ChessBoard();
         this.currentBoard.resetBoard();
+        this.isActive = true;
     }
 
     /**
@@ -45,6 +47,10 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public boolean getStatus() {
+        return isActive;
     }
 
 

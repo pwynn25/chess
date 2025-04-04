@@ -1,4 +1,5 @@
 package request;
 
-public class ResignRequest (){
+public record ResignRequest (int gameID,String authToken){
+
 }

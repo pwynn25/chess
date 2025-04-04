@@ -1,4 +1,6 @@
 package result;
 
-public class ResignResult (){
+import model.GameData;
+
+public record ResignResult (GameData game, String winner){
 }

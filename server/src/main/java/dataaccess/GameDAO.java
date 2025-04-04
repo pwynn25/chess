@@ -12,6 +12,7 @@ public interface GameDAO {
     GameData createGame(String gameName) throws ExceptionResponse;
     GameData getGame(int gameID) throws ExceptionResponse;
     Collection<GameData> listGames() throws ExceptionResponse;
-    public void updateGameWhiteUsername(String username, int gameID) throws ExceptionResponse;
-    public void updateGameBlackUsername (String username, int gameID) throws ExceptionResponse;
+    void updateGameWhiteUsername(String username, int gameID) throws ExceptionResponse;
+    void updateGameBlackUsername (String username, int gameID) throws ExceptionResponse;
+    void updateGame(int gameID, boolean isActive) throws ExceptionResponse;
 }

@@ -10,6 +10,7 @@ public class GameData {
     private String blackUsername;
     private final String gameName;
     private ChessGame game;
+    private String winner;
 
     public GameData(int gameID,  String gameName) {
         this.gameID = gameID;
@@ -18,7 +19,6 @@ public class GameData {
         this.gameName = gameName;
         this.game = new ChessGame();
     }
-
     public String getWhiteUsername() {
         return whiteUsername;
     }
@@ -41,6 +41,9 @@ public class GameData {
 
     public String getGameName() {
         return gameName;
+    }
+    public boolean getGameStatus() {
+        return game.getStatus();
     }
 
     public ChessGame getGame() {
