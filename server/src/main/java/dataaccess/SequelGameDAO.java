@@ -27,6 +27,11 @@ public class SequelGameDAO implements GameDAO{
             UPDATE GameData
             SET BlackUsername = ?
             WHERE GameID = ?;""";
+    private static final String UPDATE_GAME = """
+            UPDATE GameData
+            SET ChessGame = ?
+            WHERE GameID = ?;
+            """;
 
 
     public SequelGameDAO() {
@@ -177,5 +182,26 @@ public class SequelGameDAO implements GameDAO{
             throw new ExceptionResponse(500, "There was an Error accessing the database");
         }
     }
+
+    @Override
+    public void updateGame(int gameID, boolean isActive) throws ExceptionResponse{
+        try(var conn = DatabaseManager.getConnection()) {
+            try (var stmt = conn.prepareStatement(UPDATE_GAME)){
+                stmt.setBoolean(1, isActive);  // Set username
+                stmt.setInt(2, gameID);  // Set password
+                int rowsUpdated = stmt.executeUpdate();
+                if(rowsUpdated == 0) {
+                    throw new ExceptionResponse(500, "Error: database was not updated");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new ExceptionResponse(500, "There was an Error accessing the database");
+        }
+    }
+
+
 
 }
