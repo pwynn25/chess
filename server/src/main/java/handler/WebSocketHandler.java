@@ -44,7 +44,7 @@ public class WebSocketHandler {
 
         switch (userGameCommand.getCommandType()) {
             case CONNECT: connect(authToken, gameID, session);
-            case MAKE_MOVE: makeMove(session,authToken,gameID,move); // you need to know what session you
+            case MAKE_MOVE: makeMove(session,authToken,gameID,userGameCommand.getChessMove()); // check this method with a TA!
             case LEAVE: leave(gameID, authToken, session);
             case RESIGN: resign(gameID,authToken, session);
 

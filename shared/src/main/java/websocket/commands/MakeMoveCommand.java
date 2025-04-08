@@ -9,6 +9,12 @@ public class MakeMoveCommand extends UserGameCommand {
         super(commandType,authToken,gameID);
         this.chessMove = move;
     }
+    @Override
+    public ChessMove getChessMove() {
+        return chessMove;
+    }
 
-
+    public void setChessMove(ChessMove chessMove) {
+        this.chessMove = chessMove;
+    }
 }
