@@ -1,13 +1,14 @@
 package handler;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
-import dataaccess.GameDAO;
 import exception.WebSocketException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import request.ConnectRequest;
 import request.LeaveRequest;
+import request.MoveRequest;
 import request.ResignRequest;
 import result.ConnectResult;
 import result.LeaveResult;
@@ -19,6 +20,7 @@ import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessageError;
 
 import java.util.Objects;
+import java.util.Set;
 
 @WebSocket
 public class WebSocketHandler {
@@ -38,7 +40,6 @@ public class WebSocketHandler {
 
         int gameID = userGameCommand.getGameID();
         String authToken = userGameCommand.getAuthToken();
-
 
 
         switch (userGameCommand.getCommandType()) {
@@ -88,8 +89,7 @@ public class WebSocketHandler {
             webSocketSessions.removeSessionFromGame(gameID, session);
 
 //            broadcastMessage(gameID, result.message(), session);
-            ServerMessage sm= new Notifier(ServerMessage.ServerMessageType.NOTIFICATION);
-            ((Notifier) sm).setMessage(result.username() + " has left the game");
+            ServerMessage sm= new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,result.username() + " has left the game");
             return sm;
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
@@ -104,13 +104,13 @@ public class WebSocketHandler {
             ConnectResult res = playGameService.connect(req);
             // add user to web socket sessions
             webSocketSessions.addSessionToGame(gameID, session);
-            ServerMessage sm = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION);
+            ServerMessage sm;
             if (isObserver(res.username(), res.game())) {
-                ((Notifier) sm).setMessage(res.username() + " is observing the game");
+                sm = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,res.username() + " is observing the game");
                 return sm;
             }
             else {
-                ((Notifier) sm).setMessage(res.username() + " joined the game");
+                sm = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,res.username() + " joined the game");
                 return sm;
             }
         }catch(WebSocketException e){
@@ -130,9 +130,9 @@ public class WebSocketHandler {
 
             webSocketSessions.removeSessionFromGame(gameID, session);
 
-            ServerMessage sm= new Notifier(ServerMessage.ServerMessageType.NOTIFICATION);
-            ((Notifier) sm).setMessage("Someone has resigned from the game");
-//            broadcastMessage(gameID, result.message(), session);
+            ServerMessage sm= new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,
+                    result.winner() + "has won the game because the other player resigned");
+//          broadcastMessage(gameID, result.message(), session);
             return sm;
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
@@ -142,7 +142,21 @@ public class WebSocketHandler {
 
     }
 
-    public Object makeMove(int gameID, String authToken) {
+    public Object makeMove(Session session, String authToken, int gameID, ChessMove move) {
+        try {
+            Set<Session> sessions = webSocketSessions.getSessionsForGame(gameID);
+
+            if (sessions.contains(session)) {
+                MoveRequest moveRequest = new MoveRequest(authToken, gameID, move);
+                playGameService.makeMove(moveRequest);
+
+
+            }
+        } catch (WebSocketException e) {
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
+            ((ServerMessageError) sm).setMessage(e.getMessage());
+            return sm;
+        }
 
         return null;
     }

@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import websocket.commands.UserGameCommand;
+
 import java.util.Objects;
 
 /**
@@ -9,7 +11,7 @@ import java.util.Objects;
  * methods.
  */
 public class ServerMessage {
-    ServerMessageType serverMessageType;
+    private ServerMessageType serverMessageType;
 
 
     public enum ServerMessageType {
@@ -17,7 +19,7 @@ public class ServerMessage {
         ERROR,
         NOTIFICATION
     }
-    public ServerMessage() {
+    public ServerMessage () {
 
     }
 

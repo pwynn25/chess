@@ -2,10 +2,11 @@ package websocket.messages;
 
 public class Notifier extends ServerMessage{
     private String message;
-    ServerMessageType serverMessageType;
 
-    public Notifier(ServerMessageType serverMessageType) {
-        this.serverMessageType = serverMessageType;
+    public Notifier(ServerMessageType serverMessageType, String message) {
+        super(serverMessageType);
+        this.message = message;
+
     }
     public void setMessage(String message) {
         this.message = message;

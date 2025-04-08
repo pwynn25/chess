@@ -187,8 +187,8 @@ public class SequelGameDAO implements GameDAO{
     public void updateGame(int gameID, boolean isActive) throws ExceptionResponse{
         try(var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.prepareStatement(UPDATE_GAME)){
-                stmt.setBoolean(1, isActive);  // Set username
-                stmt.setInt(2, gameID);  // Set password
+                stmt.setBoolean(1, isActive);
+                stmt.setInt(2, gameID);  //
                 int rowsUpdated = stmt.executeUpdate();
                 if(rowsUpdated == 0) {
                     throw new ExceptionResponse(500, "Error: database was not updated");

@@ -1,5 +1,8 @@
 package service;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -9,9 +12,11 @@ import model.AuthData;
 import model.GameData;
 import request.ConnectRequest;
 import request.LeaveRequest;
+import request.MoveRequest;
 import request.ResignRequest;
 import result.ConnectResult;
 import result.LeaveResult;
+import result.MoveResult;
 import result.ResignResult;
 
 import java.util.Objects;
@@ -86,6 +91,51 @@ public class PlayGameService {
         } catch (ExceptionResponse e) {
             throw new WebSocketException(e.getStatusCode(),e.getMessage());
         }
+    }
+
+    public MoveResult makeMove(MoveRequest request) throws WebSocketException {
+        try {
+            AuthData auth = auths.getAuth(request.authToken());
+            GameData gameData = games.getGame(request.gameID());
+
+            if (isAuthorized(request.authToken())) {
+                ChessGame.TeamColor reqPlayerColor = getReqPLayerColor(gameData,auth.getUsername());
+                ChessGame game = gameData.getGame();
+                if (game.getTeamTurn() == reqPlayerColor) {
+                    try {
+                        game.makeMove(request.move());
+
+
+                    }
+                    catch (InvalidMoveException e) {
+                        throw new WebSocketException(500, e.getMessage());
+                    }
+
+                    // update the board and send it back to be printed
+                }
+                else {
+                    throw new WebSocketException(500, "Error: " + auth.getUsername() + " tried to move out of turn");
+                }
+//               we have already determined that the player can make a move (is it the players turn?)
+            }
+
+        } catch (ExceptionResponse e) {
+            throw new WebSocketException(e.getStatusCode(),e.getMessage());
+        }
+    }
+
+    public ChessGame.TeamColor getReqPLayerColor(GameData gameData, String username) throws WebSocketException{
+        ChessGame.TeamColor reqPlayerColor;
+        if(gameData.getBlackUsername() == username) {
+            reqPlayerColor = ChessGame.TeamColor.BLACK;
+        }
+        else if (gameData.getWhiteUsername() == username) {
+            reqPlayerColor = ChessGame.TeamColor.WHITE;
+        }
+        else {
+            throw new WebSocketException(500,"Error: " + username + "is an observer");
+        }
+        return reqPlayerColor;
     }
 
 

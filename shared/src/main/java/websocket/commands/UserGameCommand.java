@@ -9,15 +9,16 @@ import java.util.Objects;
  * methods.
  */
 public class UserGameCommand {
-    private final CommandType commandType;
-    private final String authToken;
-    private final Integer gameID;
+    public CommandType commandType;
+    public String authToken;
+    public Integer gameID;
 
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
     }
+
 
     public enum CommandType {
         CONNECT,
