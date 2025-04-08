@@ -3,6 +3,7 @@ package service;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.InvalidMoveException;
+import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -79,11 +80,11 @@ public class PlayGameService {
             GameData game = games.getGame(request.gameID());
             if (isAuthorized(request.authToken())) {
                 if(Objects.equals(game.getBlackUsername(), auth.getUsername())) {
-                    games.updateGame(request.gameID(),false);
+                    games.updateGame(request.gameID(),game.getGame());
                     winner = game.getWhiteUsername();
                 }
                 else if (Objects.equals(game.getWhiteUsername(), auth.getUsername())) {
-                    games.updateGame(request.gameID(),false);
+                    games.updateGame(request.gameID(), game.getGame());
                     winner = game.getBlackUsername();
                 }
             }
@@ -104,21 +105,18 @@ public class PlayGameService {
                 if (game.getTeamTurn() == reqPlayerColor) {
                     try {
                         game.makeMove(request.move());
-
-
+                        games.updateGame(gameData.getGameID(), game);
+                        return new MoveResult(games.getGame(gameData.getGameID()));
                     }
                     catch (InvalidMoveException e) {
                         throw new WebSocketException(500, e.getMessage());
                     }
-
-                    // update the board and send it back to be printed
                 }
                 else {
                     throw new WebSocketException(500, "Error: " + auth.getUsername() + " tried to move out of turn");
                 }
-//               we have already determined that the player can make a move (is it the players turn?)
             }
-
+            return new MoveResult(games.getGame(gameData.getGameID()));
         } catch (ExceptionResponse e) {
             throw new WebSocketException(e.getStatusCode(),e.getMessage());
         }

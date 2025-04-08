@@ -14,5 +14,5 @@ public interface GameDAO {
     Collection<GameData> listGames() throws ExceptionResponse;
     void updateGameWhiteUsername(String username, int gameID) throws ExceptionResponse;
     void updateGameBlackUsername (String username, int gameID) throws ExceptionResponse;
-    void updateGame(int gameID, boolean isActive) throws ExceptionResponse;
+    void updateGame(int gameID, ChessGame game) throws ExceptionResponse;
 }

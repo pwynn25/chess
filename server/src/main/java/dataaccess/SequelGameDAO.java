@@ -184,10 +184,12 @@ public class SequelGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, boolean isActive) throws ExceptionResponse{
+    public void updateGame(int gameID, ChessGame game) throws ExceptionResponse{
         try(var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.prepareStatement(UPDATE_GAME)){
-                stmt.setBoolean(1, isActive);
+                var serializer = new Gson();
+                var gameJSON = serializer.toJson(game);
+                stmt.setString(1, gameJSON);
                 stmt.setInt(2, gameID);  //
                 int rowsUpdated = stmt.executeUpdate();
                 if(rowsUpdated == 0) {

@@ -35,7 +35,7 @@ public class MemoryGameDAO implements GameDAO{
     public void clear() {
         gameDataMap.clear();
     }
-    public void updateGame(int gameID, boolean isActive) {
+    public void updateGame(int gameID, ChessGame game) {
 
     }
 

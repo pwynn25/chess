@@ -44,7 +44,7 @@ public class WebSocketHandler {
 
         switch (userGameCommand.getCommandType()) {
             case CONNECT: connect(authToken, gameID, session);
-//            case MAKE_MOVE: makeMove(session, move); // you need to know what session you
+            case MAKE_MOVE: makeMove(session,authToken,gameID,move); // you need to know what session you
             case LEAVE: leave(gameID, authToken, session);
             case RESIGN: resign(gameID,authToken, session);
 
@@ -99,7 +99,7 @@ public class WebSocketHandler {
     }
 
     public Object connect(String authToken, int gameID, Session session) {
-        try {// verify the auth token
+        try {
             ConnectRequest req = new ConnectRequest(authToken, gameID);
             ConnectResult res = playGameService.connect(req);
             // add user to web socket sessions
@@ -157,7 +157,6 @@ public class WebSocketHandler {
             ((ServerMessageError) sm).setMessage(e.getMessage());
             return sm;
         }
-
         return null;
     }
 

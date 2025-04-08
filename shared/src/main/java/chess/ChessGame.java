@@ -52,6 +52,9 @@ public class ChessGame {
     public boolean getStatus() {
         return isActive;
     }
+    public void setStatus(boolean isActive) {
+        this.isActive = isActive;
+    }
 
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
