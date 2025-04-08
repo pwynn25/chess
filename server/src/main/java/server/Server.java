@@ -63,7 +63,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 
-        Spark.webSocket("/ws",WebSocketHandler.class);
+        Spark.webSocket("/ws",this.webSocketHandler);
         Spark.delete("/db", (req, res) -> (clearHandler.clearDB(req, res)));
         Spark.delete("/session", (Request req, Response res) -> (logoutHandler.logout(req, res)));
         Spark.get("/game", listGamesHandler::list);

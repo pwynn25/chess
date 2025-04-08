@@ -49,8 +49,6 @@ public class PlayGameService {
         }
     }
 
-    // makeMove
-
 
     // leaveGame
     public LeaveResult leave(LeaveRequest req) throws WebSocketException{
@@ -98,7 +96,6 @@ public class PlayGameService {
         try {
             AuthData auth = auths.getAuth(request.authToken());
             GameData gameData = games.getGame(request.gameID());
-
             if (isAuthorized(request.authToken())) {
                 ChessGame.TeamColor reqPlayerColor = getReqPLayerColor(gameData,auth.getUsername());
                 ChessGame game = gameData.getGame();

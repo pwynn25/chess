@@ -14,7 +14,9 @@ import result.ConnectResult;
 import result.LeaveResult;
 import result.ResignResult;
 import service.PlayGameService;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.Notifier;
 import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessageError;
@@ -38,6 +40,10 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws Exception {
         UserGameCommand userGameCommand = new  Gson().fromJson(message, UserGameCommand.class);
 
+        if (userGameCommand.getCommandType()  == UserGameCommand.CommandType.MAKE_MOVE) {
+            userGameCommand = new Gson().fromJson(message,MakeMoveCommand.class);
+        }
+
         int gameID = userGameCommand.getGameID();
         String authToken = userGameCommand.getAuthToken();
 
@@ -53,22 +59,21 @@ public class WebSocketHandler {
                 throw new WebSocketException(500, "invalid input");
         }
 
-    }
-
-    @OnWebSocketConnect
-    public void onConnect(Session session) {}
-
-    @OnWebSocketClose
-    public void onClose(Session session) {}
-
-    @OnWebSocketError
-    public void onError (WebSocketException e) {
-
 
     }
+
+//    @OnWebSocketConnect
+//    public void onConnect(Session session) {}
+//
+//    @OnWebSocketClose
+//    public void onClose(Session session) {}
+//
+//    @OnWebSocketError
+//    public void onError (WebSocketException e) {}
 
     public void sendMessage(Session session, String message) {
         // a web socket command is supposed to go here
+
     }
 
     public void broadcastMessage(int gameID, String message, Session exceptThisSession) {
@@ -81,49 +86,45 @@ public class WebSocketHandler {
         //leaveGame(message)
 
     // these functions are going to call broadcast and stuff
-    public Object leave(int gameID, String authToken, Session session) throws WebSocketException {
+    public void leave(int gameID, String authToken, Session session) throws WebSocketException {
         try {
             LeaveRequest request = new LeaveRequest(gameID, authToken);
             LeaveResult result = playGameService.leave(request);
 
             webSocketSessions.removeSessionFromGame(gameID, session);
-
-//            broadcastMessage(gameID, result.message(), session);
             ServerMessage sm= new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,result.username() + " has left the game");
-            return sm;
+            var message = new Gson().toJson(sm);
+            broadcastMessage(gameID,message,session);
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
             ((ServerMessageError) sm).setMessage(e.getMessage());
-            return sm;
+            sendMessage(session,new Gson().toJson(sm));
         }
     }
 
-    public Object connect(String authToken, int gameID, Session session) {
+    public void connect(String authToken, int gameID, Session session) {
         try {
             ConnectRequest req = new ConnectRequest(authToken, gameID);
             ConnectResult res = playGameService.connect(req);
             // add user to web socket sessions
             webSocketSessions.addSessionToGame(gameID, session);
-            ServerMessage sm;
-            if (isObserver(res.username(), res.game())) {
-                sm = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,res.username() + " is observing the game");
-                return sm;
-            }
-            else {
-                sm = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,res.username() + " joined the game");
-                return sm;
-            }
+            ServerMessage smNotify;
+            ServerMessage smLoadGame;
+            smNotify = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,res.username() + " is observing the game");
+            smLoadGame = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,res.game());
+            sendMessage(session,new Gson().toJson(smLoadGame));
+            broadcastMessage(gameID,new Gson().toJson(smNotify),session);
         }catch(WebSocketException e){
-            ServerMessage sm = new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
             ((ServerMessageError) sm).setMessage(e.getMessage());
-            return sm;
+            sendMessage(session,new Gson().toJson(sm));
         }
     }
     private boolean isObserver(String username, GameData game) {
         return !Objects.equals(username, game.getWhiteUsername()) && !Objects.equals(username, game.getBlackUsername());
     }
 
-    public Object resign(int gameID, String authToken, Session session) throws WebSocketException {
+    public void resign(int gameID, String authToken, Session session) throws WebSocketException {
         try {
             ResignRequest request = new ResignRequest(gameID, authToken);
             ResignResult result = playGameService.resign(request);
@@ -137,7 +138,7 @@ public class WebSocketHandler {
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
             ((ServerMessageError) sm).setMessage(e.getMessage());
-            return sm;
+            sendMessage(session,new Gson().toJson(sm));
         }
 
     }
@@ -155,7 +156,7 @@ public class WebSocketHandler {
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
             ((ServerMessageError) sm).setMessage(e.getMessage());
-            return sm;
+            sendMessage(session,new Gson().toJson(sm));
         }
         return null;
     }
