@@ -25,10 +25,6 @@ public class WebSocketSessions {
         this.sessionMap.put(gameID, playersAndObservers);
     }
 
-    public void removeSession(int gameID, Session session) {
-
-   }
-
    public Set<Session> getSessionsForGame(int gameID) {
         return sessionMap.get(gameID);
     }

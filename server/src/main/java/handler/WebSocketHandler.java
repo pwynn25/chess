@@ -131,9 +131,6 @@ public class WebSocketHandler {
             sendMessage(session,new Gson().toJson(sm));
         }
     }
-    private boolean isObserver(String username, GameData game) {
-        return !Objects.equals(username, game.getWhiteUsername()) && !Objects.equals(username, game.getBlackUsername());
-    }
 
     public void resign(int gameID, String authToken, Session session) throws WebSocketException {
         try {
