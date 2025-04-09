@@ -2,12 +2,13 @@ package handler;
 
 import org.eclipse.jetty.websocket.api.Session;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class WebSocketSessions {
-    private Map<Integer, Set<Session>> sessionMap;
+    private Map<Integer, Set<Session>> sessionMap = new HashMap<>();
 
     public void addSessionToGame(int gameID, Session session) {
         Set<Session> playersAndObservers = new HashSet<>();

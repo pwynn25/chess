@@ -76,10 +76,9 @@ public class WebSocketHandler {
 
     public void sendMessage(Session session, String message) {
         try {
-            session.getRemote().sendString("WebSocket response: " + message);
+            session.getRemote().sendString(message);
         } catch(IOException e) {
-            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
-            ((ServerMessageError) sm).setMessage(e.getMessage());
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             sendMessage(session,new Gson().toJson(sm));
         }
     }
@@ -104,8 +103,7 @@ public class WebSocketHandler {
             var message = new Gson().toJson(sm);
             broadcastMessage(gameID,message,session);
         } catch (WebSocketException e) {
-            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
-            ((ServerMessageError) sm).setMessage(e.getMessage());
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             sendMessage(session,new Gson().toJson(sm));
         }
     }
@@ -124,8 +122,7 @@ public class WebSocketHandler {
             sendMessage(session,new Gson().toJson(smLoadGame));
             broadcastMessage(gameID,new Gson().toJson(smNotify),session);
         }catch(WebSocketException e){
-            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
-            ((ServerMessageError) sm).setMessage(e.getMessage());
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             sendMessage(session,new Gson().toJson(sm));
         }
     }
@@ -144,8 +141,7 @@ public class WebSocketHandler {
             broadcastMessage(gameID, message, session);
             sendMessage(session,message);
         } catch (WebSocketException e) {
-            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
-            ((ServerMessageError) sm).setMessage(e.getMessage());
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR,e.getMessage());
             sendMessage(session,new Gson().toJson(sm));
         }
 
@@ -167,8 +163,7 @@ public class WebSocketHandler {
                 broadcastMessage(gameID,new Gson().toJson(smLoad),session);
             }
         } catch (WebSocketException e) {
-            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
-            ((ServerMessageError) sm).setMessage(e.getMessage());
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             sendMessage(session,new Gson().toJson(sm));
         }
         return null;

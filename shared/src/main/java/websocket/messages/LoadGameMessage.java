@@ -5,7 +5,6 @@ import model.GameData;
 
 public class LoadGameMessage extends ServerMessage{
     private GameData game;
-    private ServerMessageType serverMessageType;
     public LoadGameMessage(ServerMessageType serverMessageType, GameData gameData) {
         super(serverMessageType);
         this.game = gameData;
