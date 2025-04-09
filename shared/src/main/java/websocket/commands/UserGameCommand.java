@@ -41,7 +41,7 @@ public class UserGameCommand {
         return gameID;
     }
 
-    public ChessMove getChessMove() {
+    public ChessMove getMove() {
         return null;
     }
 

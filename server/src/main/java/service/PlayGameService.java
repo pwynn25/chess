@@ -39,11 +39,17 @@ public class PlayGameService {
     public ConnectResult connect(ConnectRequest connectRequest) throws WebSocketException {
         try {
             AuthData auth = auths.getAuth(connectRequest.authToken());
-            GameData game = games.getGame(connectRequest.gameID());
+            GameData game;
             if(isAuthorized(connectRequest.authToken())) {
                 game = games.getGame(connectRequest.gameID());
+                if (game == null) {
+                    throw new WebSocketException(500, "Error: invalid game ID");
+                }
+                return new ConnectResult(auth.getUsername(), game);
             }
-            return new ConnectResult(auth.getUsername(), game);
+            else {
+                throw new WebSocketException(500, "Error: unauthorized");
+            }
         }catch (ExceptionResponse e) {
             throw new WebSocketException(e.getStatusCode(),e.getMessage());
         }
@@ -76,14 +82,21 @@ public class PlayGameService {
         try {
             AuthData auth = auths.getAuth(request.authToken());
             GameData game = games.getGame(request.gameID());
+            checkIfActive(game);
+
+            ChessGame finishedGame = game.getGame();
             if (isAuthorized(request.authToken())) {
+                finishedGame.setStatus(false);
                 if(Objects.equals(game.getBlackUsername(), auth.getUsername())) {
-                    games.updateGame(request.gameID(),game.getGame());
+                    games.updateGame(request.gameID(),finishedGame);
                     winner = game.getWhiteUsername();
                 }
                 else if (Objects.equals(game.getWhiteUsername(), auth.getUsername())) {
-                    games.updateGame(request.gameID(), game.getGame());
+                    games.updateGame(request.gameID(), finishedGame);
                     winner = game.getBlackUsername();
+                }
+                else {
+                    throw new WebSocketException(500, "an observer cannot resign from a game");
                 }
             }
             return new ResignResult(games.getGame(request.gameID()),winner,auth.getUsername());
@@ -96,6 +109,7 @@ public class PlayGameService {
         try {
             AuthData auth = auths.getAuth(request.authToken());
             GameData gameData = games.getGame(request.gameID());
+            checkIfActive(gameData);
             if (isAuthorized(request.authToken())) {
                 ChessGame.TeamColor reqPlayerColor = getReqPLayerColor(gameData,auth.getUsername());
                 ChessGame game = gameData.getGame();
@@ -113,18 +127,26 @@ public class PlayGameService {
                     throw new WebSocketException(500, "Error: " + auth.getUsername() + " tried to move out of turn");
                 }
             }
-            return new MoveResult(games.getGame(gameData.getGameID()));
+            else {
+                throw new WebSocketException(500,"Error: unauthorized");
+            }
         } catch (ExceptionResponse e) {
             throw new WebSocketException(e.getStatusCode(),e.getMessage());
         }
     }
 
+    public void checkIfActive(GameData gameData) throws WebSocketException{
+        if(!gameData.getGameStatus()) {
+            throw new WebSocketException(500, "the game is over");
+        }
+    }
+
     public ChessGame.TeamColor getReqPLayerColor(GameData gameData, String username) throws WebSocketException{
         ChessGame.TeamColor reqPlayerColor;
-        if(gameData.getBlackUsername() == username) {
+        if(Objects.equals(gameData.getBlackUsername(), username)) {
             reqPlayerColor = ChessGame.TeamColor.BLACK;
         }
-        else if (gameData.getWhiteUsername() == username) {
+        else if (Objects.equals(gameData.getWhiteUsername(), username)) {
             reqPlayerColor = ChessGame.TeamColor.WHITE;
         }
         else {
