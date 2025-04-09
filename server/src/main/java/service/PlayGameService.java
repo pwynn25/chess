@@ -86,7 +86,7 @@ public class PlayGameService {
                     winner = game.getBlackUsername();
                 }
             }
-            return new ResignResult(games.getGame(request.gameID()),winner);
+            return new ResignResult(games.getGame(request.gameID()),winner,auth.getUsername());
         } catch (ExceptionResponse e) {
             throw new WebSocketException(e.getStatusCode(),e.getMessage());
         }

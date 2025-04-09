@@ -12,6 +12,7 @@ import request.MoveRequest;
 import request.ResignRequest;
 import result.ConnectResult;
 import result.LeaveResult;
+import result.MoveResult;
 import result.ResignResult;
 import service.PlayGameService;
 import websocket.commands.MakeMoveCommand;
@@ -20,6 +21,8 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.Notifier;
 import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessageError;
+
+import java.io.IOException;
 
 import java.util.Objects;
 import java.util.Set;
@@ -72,20 +75,25 @@ public class WebSocketHandler {
 //    public void onError (WebSocketException e) {}
 
     public void sendMessage(Session session, String message) {
-        // a web socket command is supposed to go here
-
+        try {
+            session.getRemote().sendString("WebSocket response: " + message);
+        } catch(IOException e) {
+            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
+            ((ServerMessageError) sm).setMessage(e.getMessage());
+            sendMessage(session,new Gson().toJson(sm));
+        }
     }
 
     public void broadcastMessage(int gameID, String message, Session exceptThisSession) {
-        // a web socket command is supposed to go here
-//        sendMessage(session, message);
-    }
-        // call the appropriate function , these methods call different services
-        // connect(message)
-        // makeMove(message)
-        //leaveGame(message)
+        Set<Session> setOfSessions = webSocketSessions.getSessionsForGame(gameID);
 
-    // these functions are going to call broadcast and stuff
+        for(Session session: setOfSessions) {
+            if(session != exceptThisSession) {
+                sendMessage(session, message);
+            }
+        }
+    }
+
     public void leave(int gameID, String authToken, Session session) throws WebSocketException {
         try {
             LeaveRequest request = new LeaveRequest(gameID, authToken);
@@ -110,6 +118,7 @@ public class WebSocketHandler {
             webSocketSessions.addSessionToGame(gameID, session);
             ServerMessage smNotify;
             ServerMessage smLoadGame;
+
             smNotify = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,res.username() + " is observing the game");
             smLoadGame = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,res.game());
             sendMessage(session,new Gson().toJson(smLoadGame));
@@ -128,13 +137,12 @@ public class WebSocketHandler {
         try {
             ResignRequest request = new ResignRequest(gameID, authToken);
             ResignResult result = playGameService.resign(request);
-
             webSocketSessions.removeSessionFromGame(gameID, session);
-
             ServerMessage sm= new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,
-                    result.winner() + "has won the game because the other player resigned");
-//          broadcastMessage(gameID, result.message(), session);
-            return sm;
+                    result.loser() + "has resigned from the game");
+            var message = new Gson().toJson(sm);
+            broadcastMessage(gameID, message, session);
+            sendMessage(session,message);
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
             ((ServerMessageError) sm).setMessage(e.getMessage());
@@ -149,9 +157,14 @@ public class WebSocketHandler {
 
             if (sessions.contains(session)) {
                 MoveRequest moveRequest = new MoveRequest(authToken, gameID, move);
-                playGameService.makeMove(moveRequest);
-
-
+                MoveResult res = playGameService.makeMove(moveRequest);
+                ServerMessage smLoad = new Notifier(ServerMessage.ServerMessageType.NOTIFICATION,move.toString());
+                ServerMessage smMove = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,res.game());
+                // load the new board
+                broadcastMessage(gameID,new Gson().toJson(smLoad),session);
+                sendMessage(session,new Gson().toJson(smLoad));
+                // inform players and observers of the move
+                broadcastMessage(gameID,new Gson().toJson(smLoad),session);
             }
         } catch (WebSocketException e) {
             ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR);
@@ -160,8 +173,4 @@ public class WebSocketHandler {
         }
         return null;
     }
-
-
-
-
 }
