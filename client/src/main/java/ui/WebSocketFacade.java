@@ -87,13 +87,5 @@ public class WebSocketFacade extends Endpoint implements MessageHandler.Whole<St
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
-//    @Override
-//    public void onClose(Session session, EndpointConfig endpointConfig) {
-//
-//    }
-//    @Override
-//    public void onError(Session session, EndpointConfig endpointConfig) {
-//
-//    }
 
 }
