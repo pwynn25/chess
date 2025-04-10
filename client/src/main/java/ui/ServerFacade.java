@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import exception.ExceptionResponseNoThrow;
 import request.*;
 import result.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -71,7 +69,7 @@ public class ServerFacade {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             addAuthToken(request,http);
-            System.out.println(request);
+//            System.out.println(request);
             String reqData = new Gson().toJson(request);
             if(!(request instanceof ListRequest)) {
                 try (OutputStream reqBody = http.getOutputStream()) {
@@ -101,9 +99,24 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ServerException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
+            String errorMessage = "unknown error";
             try (InputStream respErrJSON = http.getErrorStream()) {
-                ExceptionResponseNoThrow respError = new Gson().fromJson(new InputStreamReader(respErrJSON), ExceptionResponseNoThrow.class);
-                throw new ServerException(status,respError.getMessage());
+                InputStreamReader reader = new InputStreamReader(respErrJSON);
+                BufferedReader buffered = new BufferedReader(reader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = buffered.readLine()) != null) {
+                    sb.append(line);
+                }
+                String rawError = sb.toString();
+                System.out.println("Raw Error Response: " + rawError);
+                try {
+                    ExceptionResponseNoThrow respError = new Gson().fromJson(rawError, ExceptionResponseNoThrow.class);
+                    errorMessage = respError.getMessage();
+                } catch (Exception jsonEx) {
+                    errorMessage = rawError;
+                }
+                throw new ServerException(status,errorMessage);
             }
         }
     }

@@ -4,6 +4,10 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+
 import static ui.EscapeSequences.*;
 
 public class BoardPrinter {
@@ -11,6 +15,16 @@ public class BoardPrinter {
     private static final int[] BLACK={1,8,8,1};
     private static final String[] LETTERS = {"a","b","c","d","e","f","g","h"};
     private static final int[] NUMBERS = {1,2,3,4,5,6,7,8};
+    private static Collection<ChessPosition> positionsToHighlight = new ArrayList<>();
+    private static ChessPosition startPosition;
+
+    public BoardPrinter() {
+
+    }
+    public BoardPrinter(Collection<ChessPosition> positionsToHighlight, ChessPosition startPosition) {
+        BoardPrinter.positionsToHighlight = positionsToHighlight;
+        BoardPrinter.startPosition = startPosition;
+    }
 
 
     public String printTopAndBottomEdge(boolean isWhite) {
@@ -34,17 +48,31 @@ public class BoardPrinter {
 
     public String printBoard(ChessBoard board, ChessGame.TeamColor teamColor) {
         int[] loopParams;
+        int maxColumn = 8;
+        int minColumn = 1;
+        int minRow = 1;
+        int maxRow = 8;
         StringBuilder sb = new StringBuilder(SET_TEXT_COLOR_BLACK);
         String bgColor;
         sb.append(printTopAndBottomEdge(teamColor == ChessGame.TeamColor.WHITE));
         if(teamColor == ChessGame.TeamColor.WHITE) {
             int row = 8;
-            loopParams = WHITE;
-            for (int i = loopParams[0]; i >= loopParams[1]; i--) {
+            for (int i = maxRow; i >= minRow; i--) {
                 sb.append(addNumber(row));
-                for (int j = loopParams[2]; j <= loopParams[3]; j++) {
-                        bgColor = setSquareColor(i, j);
-                        sb.append(drawSpot(i, j, bgColor, board));
+                for (int j = minColumn; j <= maxColumn; j++) {
+                        if(positionsToHighlight.contains(new ChessPosition(i,j))) {
+                            System.out.println(new ChessPosition(i,j));
+                            bgColor = SET_BG_COLOR_RED;
+                            sb.append(drawSpot(i,j,bgColor,board));
+                        }
+                        else if (Objects.equals(startPosition, new ChessPosition(i, j))) {
+                            bgColor = SET_BG_COLOR_YELLOW;
+                            sb.append(drawSpot(i,j,bgColor,board));
+                        }
+                        else {
+                            bgColor = setSquareColor(i, j);
+                            sb.append(drawSpot(i, j, bgColor, board));
+                        }
                 }
                 sb.append(addNumber(row));
                 sb.append("\n");
@@ -68,6 +96,8 @@ public class BoardPrinter {
         sb.append(printTopAndBottomEdge(teamColor == ChessGame.TeamColor.WHITE));
         return sb.toString();
     }
+
+
 
     public String drawSpot(int i, int j,String bgColor, ChessBoard board) {
         StringBuilder sb = new StringBuilder(SET_TEXT_COLOR_BLACK);

@@ -6,6 +6,7 @@ import request.CreateRequest;
 import request.JoinRequest;
 import request.ListRequest;
 import request.LogoutRequest;
+import result.CreateResult;
 import result.JoinResult;
 import result.ListResult;
 
@@ -67,8 +68,8 @@ public class PostLoginClient implements Client{
     private String create(String...params) throws InputError{
         try {
             if(params.length == 1) {
-                server.create(new CreateRequest(params[0]));
-                return "Your game was successfully created!\n";
+                CreateResult  res= server.create(new CreateRequest(params[0]));
+                return "Game ID: " + res.gameID() + " has been created!\n";
             }
             else {
                 throw new InputError("Create a new game: \"create\" <GAMENAME>\n");
@@ -129,6 +130,7 @@ public class PostLoginClient implements Client{
 
                 JoinResult joinResult = server.join(new JoinRequest(gameID, teamColor));
                 repl.setUserStatus(IN_GAME);
+                repl.setTeamColor(teamColor);
                 repl.setGame(joinResult.game().getGame());
                 String boardString = boardToString(new BoardPrinter(),joinResult.game().getGame(), teamColor);
                 return "You joined game " + gameNum + "\n" + boardString;

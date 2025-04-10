@@ -18,6 +18,7 @@ public class Repl {
     private UserStatus userStatus;
     public ServerFacade server;
     public HashMap<Integer, Integer> gameMap = new HashMap<>();
+    public ChessGame.TeamColor teamColor;
 
     public Repl(String urlServer) {
         this.urlServer = urlServer;
@@ -27,7 +28,6 @@ public class Repl {
         this.postClient = new PostLoginClient(this);
         this.preClient = new PreLoginClient(this);
         this.inGameClient = new InGameClient(this);
-
 
     }
 
@@ -72,5 +72,8 @@ public class Repl {
     public void setGame(ChessGame game) {
         this.inGameClient.setGame(game);
                 // function that sets the game
+    }
+    public void setTeamColor(ChessGame.TeamColor teamColor) {
+        this.teamColor = teamColor;
     }
 }
