@@ -41,6 +41,7 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
+        System.out.println("Received message: " + message);
         UserGameCommand userGameCommand = new  Gson().fromJson(message, UserGameCommand.class);
 
         int gameID = userGameCommand.getGameID();
@@ -66,7 +67,8 @@ public class WebSocketHandler {
     }
 
 //    @OnWebSocketConnect
-//    public void onConnect(Session session) {}
+//    public void onConnect(Session session) {
+//    }
 //
 //    @OnWebSocketClose
 //    public void onClose(Session session) {}
@@ -80,6 +82,8 @@ public class WebSocketHandler {
                 session.getRemote().sendString(message);
             } else {
                 System.out.println("Session is not open");
+                ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Session is not open.");
+                session.getRemote().sendString(new Gson().toJson(errorMessage));
             }
         } catch(IOException e) {
 //            ServerMessage sm= new ServerMessageError(ServerMessage.ServerMessageType.ERROR, e.getMessage());
@@ -104,8 +108,11 @@ public class WebSocketHandler {
             LeaveResult result = playGameService.leave(request);
 
             webSocketSessions.removeSessionFromGame(gameID, session);
+
             ServerMessage sm= new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,result.username() + " has left the game");
             var message = new Gson().toJson(sm);
+
+
             broadcastMessage(gameID,message,session);
         } catch (WebSocketException e) {
             ErrorMessage sm= new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage());
@@ -136,9 +143,12 @@ public class WebSocketHandler {
         try {
             ResignRequest request = new ResignRequest(gameID, authToken);
             ResignResult result = playGameService.resign(request);
+
             webSocketSessions.removeSessionFromGame(gameID, session);
+
             ServerMessage sm= new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     result.loser() + " has resigned from the game");
+
             var message = new Gson().toJson(sm);
             broadcastMessage(gameID, message, session);
             sendMessage(session,message);

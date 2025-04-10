@@ -56,6 +56,7 @@ public class WebSocketTests {
 
     @AfterEach
     public void tearDown() {
+        serverFacade.clear();
         environment.disconnectAll();
     }
 

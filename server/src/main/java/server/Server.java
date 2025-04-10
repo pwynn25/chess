@@ -5,12 +5,14 @@ import exception.ExceptionResponse;
 import org.eclipse.jetty.websocket.api.Session;
 import handler.*;
 import handler.ExceptionHandler;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.ClearService;
 import service.GameService;
 import service.PlayGameService;
 import service.UserService;
 import spark.*;
 
+@WebSocket
 public class Server {
     private ClearHandler clearHandler;
     private RegisterHandler registerHandler;

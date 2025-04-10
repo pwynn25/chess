@@ -129,11 +129,14 @@ public class PostLoginClient implements Client{
                 }
 
                 JoinResult joinResult = server.join(new JoinRequest(gameID, teamColor));
+                // prepare to play the game
                 repl.setUserStatus(IN_GAME);
                 repl.setTeamColor(teamColor);
                 repl.setGame(joinResult.game().getGame());
-                String boardString = boardToString(new BoardPrinter(),joinResult.game().getGame(), teamColor);
-                return "You joined game " + gameNum + "\n" + boardString;
+                repl.addGameIDToClient(gameID);
+                repl.addAuthTokenToClient(server.getAuthToken());
+                repl.establishWebSocketConnection();
+                return "You joined game " + gameNum + "\n";
             }
             else {
                 throw new InputError("Join a game and begin playing: \"join\" <ID> [WHITE | BLACK]\n");

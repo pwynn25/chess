@@ -2,15 +2,17 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import model.GameData;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 import static ui.Repl.UserStatus.LOGGED_OUT;
 
-public class Repl {
-    private String urlServer;
+public class Repl implements GameHandler{
+    public String serverURL;
     private Client client;
     private PostLoginClient postClient;
     private PreLoginClient preClient;
@@ -20,10 +22,10 @@ public class Repl {
     public HashMap<Integer, Integer> gameMap = new HashMap<>();
     public ChessGame.TeamColor teamColor;
 
-    public Repl(String urlServer) {
-        this.urlServer = urlServer;
+    public Repl(String serverURL) {
+        this.serverURL = serverURL;
         this.userStatus = LOGGED_OUT;
-        this.server = new ServerFacade(urlServer);
+        this.server = new ServerFacade(serverURL);
         this.client = new PreLoginClient(this);
         this.postClient = new PostLoginClient(this);
         this.preClient = new PreLoginClient(this);
@@ -75,5 +77,20 @@ public class Repl {
     }
     public void setTeamColor(ChessGame.TeamColor teamColor) {
         this.teamColor = teamColor;
+    }
+    public void printMessage(String message) {
+        System.out.print(SET_TEXT_COLOR_RED + message);
+    }
+    public void updateGame(GameData game) {
+
+    }
+    public void addAuthTokenToClient(String authToken) {
+        this.inGameClient.setAuthToken(authToken);
+    }
+    public void addGameIDToClient(int gameID) {
+        this.inGameClient.setGameID(gameID);
+    }
+    public void establishWebSocketConnection() {
+        this.inGameClient.establishConnection();
     }
 }

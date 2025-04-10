@@ -18,6 +18,14 @@ public class ServerFacade {
         this.serverUrl = url;
     }
 
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
     public RegisterResult register(String username, String password, String email) throws ServerException{
         RegisterRequest r = new RegisterRequest(username,password,email);
         var path = "/user";

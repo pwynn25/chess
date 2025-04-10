@@ -4,23 +4,68 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import exception.WebSocketException;
+import model.GameData;
 import websocket.commands.UserGameCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static chess.ChessPiece.PieceType.*;
 
-public class InGameClient implements Client{
+
+public class InGameClient implements Client,GameHandler{
     private ServerFacade server;
     private Repl repl;
     private ChessGame game;
     private ChessGame.TeamColor teamColor;
+    private WebSocketFacade wsFacade;
+    private int gameID;
+    private String authToken;
 
     public InGameClient(Repl repl) {
         this.server = repl.server;
         this.repl = repl;
         this.teamColor = repl.teamColor;
+    }
+
+    public int getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public void establishConnection() {
+        try {
+            this.wsFacade = new WebSocketFacade(repl.serverURL, this);
+            this.wsFacade.connect(this.gameID,this.authToken);
+        } catch (WebSocketException e) {
+            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
+
+        }
+    }
+
+    @Override
+    public void printMessage(String message) {
+        System.out.println(message);
+    }
+
+    @Override
+    public void updateGame(GameData game) {
+        this.game = game.getGame();
+        System.out.println(boardToString(new BoardPrinter(),this.game,this.teamColor));
     }
 
     public void setGame(ChessGame game) {
@@ -69,23 +114,40 @@ public class InGameClient implements Client{
     }
 
     public String makeMove(String...params) throws InputError{
-        if(params.length != 2) {
-            throw new InputError("Invalid");
-        }
+        ChessMove move;
+        ChessPosition startPosition;
+        ChessPosition endPosition;
         try {
-            isValidSquareOnBoard(params[0]);
-            isValidSquareOnBoard(params[1]);
-            String boardString = boardToString(new BoardPrinter(),this.game, this.teamColor);
-            // web socket call here
-            return "you can successfully call make move" + "\n" + boardString;
+            startPosition =  isValidSquareOnBoard(params[0]);
+            endPosition = isValidSquareOnBoard(params[1]);
+            if(params.length == 3) {
+                ChessPiece.PieceType pPType = checkPromotionPiece(params[2]);
+                move = new ChessMove(startPosition,endPosition,pPType);
+            }
+            else if(params.length == 2) {
+                move = new ChessMove(startPosition,endPosition,null);
+            }
+            else {
+                throw new InputError("Invalid Input: Make a move: \"move\" <START> <END>");
+            }
         }catch(InputError e) {
             throw new InputError("Invalid Input: Make a move: \"move\" <START> <END>");
         }
+        try{
+            wsFacade.makeMove(this.gameID,this.authToken,move);
+        } catch(WebSocketException e) {
+            System.out.println("unable to maintain websocket connection");
+        }
+            return  "\n";
     }
 
     public String resign() {
-        // make a websocket call and return the string
-        return null;
+        try {
+            wsFacade.resign(this.gameID, this.authToken);
+            return "You have resigned from the game!";
+        } catch (WebSocketException e) {
+            return "Error: " + e.getMessage();
+        }
     }
 
     public String highlight(String...params) throws InputError{
@@ -113,14 +175,21 @@ public class InGameClient implements Client{
     }
     public String leave() {
         repl.setUserStatus(Repl.UserStatus.LOGGED_IN);
-        // web socket command
-//        UserGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE,this.);
-        return "You have left the game \n";
+        try {
+            wsFacade.leave(gameID, authToken);
+            return "You have left the game!";
+        } catch(WebSocketException e) {
+            return "Error: " + e.getMessage();
+        }
     }
     public String redraw() {
         return boardToString(new BoardPrinter(), this.game, teamColor);
     }
 
+
+
+
+    // Helper Functions
 
     public ChessPosition isValidSquareOnBoard(String param) throws InputError{
         int validRow;
@@ -165,8 +234,15 @@ public class InGameClient implements Client{
     public String boardToString(BoardPrinter printer, ChessGame game, ChessGame.TeamColor teamColor) {
         return printer.printBoard(game.getBoard(),teamColor);
     }
-
-
-
+    public ChessPiece.PieceType checkPromotionPiece(String thirdParam) throws InputError{
+        ChessPiece.PieceType promotionPiece = switch (thirdParam) {
+            case "q" -> QUEEN;
+            case "n" -> KNIGHT;
+            case "b" -> BISHOP;
+            case "r" -> ROOK;
+            default -> throw new InputError("invalid input");
+        };
+        return promotionPiece;
+    }
 
 }
